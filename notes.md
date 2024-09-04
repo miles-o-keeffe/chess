@@ -1,2 +1,2 @@
 # My notes
-This file is to test that github is working.
+Notes on the techniques and technologies that I learn while making chess.
