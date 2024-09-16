@@ -11,10 +11,12 @@ import java.util.Objects;
 public class ChessPosition {
 
     private final int row;
-
     private final int col;
 
     public ChessPosition(int row, int col) {
+        if (row < 1 || row > 8 || col < 1 || col > 8) {
+            throw new RuntimeException("Out of Bounds");
+        }
         this.row = row;
         this.col = col;
     }
@@ -46,5 +48,10 @@ public class ChessPosition {
     @Override
     public int hashCode() {
         return Objects.hash(getRow(), col);
+    }
+
+    @Override
+    public String toString() {
+        return this.row + ":" + this.col;
     }
 }

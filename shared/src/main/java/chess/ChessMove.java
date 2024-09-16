@@ -61,8 +61,8 @@ public class ChessMove {
         return Objects.hash(getStartPosition(), getEndPosition(), getPromotionPiece());
     }
 
-//    @Override
-//    public toString() {
-//        System.out.println()
-//    }
+    @Override
+    public String toString() {
+        return "[" + this.startPosition + " -> " + this.endPosition + "]";
+    }
 }
