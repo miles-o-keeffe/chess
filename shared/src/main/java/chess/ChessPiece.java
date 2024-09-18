@@ -1,6 +1,7 @@
 package chess;
 
 import chess.PieceRules.BishopRule;
+import chess.PieceRules.PawnRule;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,14 +37,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-       return this.pieceColor;
+        return this.pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-       return this.type;
+        return this.type;
     }
 
     /**
@@ -54,8 +55,9 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        switch(this.type) {
+        switch (this.type) {
             case PieceType.KING:
+                // return new KingRule().pieceMoves(board, myPosition);
                 break;
             case PieceType.QUEEN:
                 // return new QueenRule().pieceMoves(board, myPosition);
@@ -65,9 +67,10 @@ public class ChessPiece {
             case PieceType.KNIGHT:
                 break;
             case PieceType.ROOK:
+                // return new RookRule().pieceMoves(board, myPosition);
                 break;
             case PieceType.PAWN:
-                break;
+                return new PawnRule().pieceMoves(board, myPosition);
         }
         return new ArrayList<>();
     }
