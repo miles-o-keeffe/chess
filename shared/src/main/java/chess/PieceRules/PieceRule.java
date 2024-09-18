@@ -8,5 +8,6 @@ import java.util.Collection;
 
 abstract class PieceRule {
     int[][] movementArray;
-    abstract Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition);
+
+    abstract public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition);
 }

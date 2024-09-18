@@ -1,7 +1,6 @@
 package chess;
 
-import chess.PieceRules.BishopRule;
-import chess.PieceRules.PawnRule;
+import chess.PieceRules.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,18 +78,16 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         switch (this.type) {
             case PieceType.KING:
-                // return new KingRule().pieceMoves(board, myPosition);
-                break;
+                return new KingRule().pieceMoves(board, myPosition);
             case PieceType.QUEEN:
                 // return new QueenRule().pieceMoves(board, myPosition);
                 break;
             case PieceType.BISHOP:
                 return new BishopRule().pieceMoves(board, myPosition);
             case PieceType.KNIGHT:
-                break;
+                return new KnightRule().pieceMoves(board, myPosition);
             case PieceType.ROOK:
-                // return new RookRule().pieceMoves(board, myPosition);
-                break;
+                return new RookRule().pieceMoves(board, myPosition);
             case PieceType.PAWN:
                 return new PawnRule().pieceMoves(board, myPosition);
         }
