@@ -1,6 +1,10 @@
 package chess;
 
+import chess.PieceRules.PawnRule;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -12,7 +16,7 @@ public class ChessBoard {
     private ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
-        
+
     }
 
     /**
@@ -22,7 +26,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        squares[position.getRow()-1][position.getColumn()-1] = piece;
+        squares[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
 
     /**
@@ -33,7 +37,20 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return squares[position.getRow()-1][position.getColumn()-1];
+        return squares[position.getRow() - 1][position.getColumn() - 1];
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessBoard that = (ChessBoard) o;
+        return Objects.deepEquals(squares, that.squares);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(squares);
     }
 
     /**
@@ -41,8 +58,35 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
+        // Resets the board
         for (ChessPiece[] square : squares) {
             Arrays.fill(square, null);
         }
+
+        ChessPiece.PieceType[] startingRowTypes = new ChessPiece.PieceType[8];
+        startingRowTypes[0] = (ChessPiece.PieceType.ROOK);
+        startingRowTypes[1] = (ChessPiece.PieceType.KNIGHT);
+        startingRowTypes[2] = (ChessPiece.PieceType.BISHOP);
+        startingRowTypes[3] = (ChessPiece.PieceType.QUEEN);
+        startingRowTypes[4] = (ChessPiece.PieceType.KING);
+        startingRowTypes[5] = (ChessPiece.PieceType.BISHOP);
+        startingRowTypes[6] = (ChessPiece.PieceType.KNIGHT);
+        startingRowTypes[7] = (ChessPiece.PieceType.ROOK);
+
+        // Adds pieces to the board
+        for (int i = 1; i <= 8; i++) {
+            this.addPiece(new ChessPosition(7, i), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
+            this.addPiece(new ChessPosition(2, i), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
+
+            this.addPiece(new ChessPosition(8, i), new ChessPiece(ChessGame.TeamColor.BLACK, startingRowTypes[i - 1]));
+            this.addPiece(new ChessPosition(1, i), new ChessPiece(ChessGame.TeamColor.WHITE, startingRowTypes[i - 1]));
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "ChessBoard{" +
+                "squares=" + Arrays.toString(squares) +
+                '}';
     }
 }
