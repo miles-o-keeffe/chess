@@ -8,10 +8,9 @@ import chess.ChessPosition;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class RookRule extends PieceRule {
-
-    public RookRule() {
-        this.movementArray = new int[][]{{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+public class QueenRule extends PieceRule {
+    public QueenRule() {
+        this.movementArray = new int[][]{{1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}};
     }
 
     @Override

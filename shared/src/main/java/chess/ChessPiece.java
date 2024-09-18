@@ -76,21 +76,13 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        switch (this.type) {
-            case PieceType.KING:
-                return new KingRule().pieceMoves(board, myPosition);
-            case PieceType.QUEEN:
-                // return new QueenRule().pieceMoves(board, myPosition);
-                break;
-            case PieceType.BISHOP:
-                return new BishopRule().pieceMoves(board, myPosition);
-            case PieceType.KNIGHT:
-                return new KnightRule().pieceMoves(board, myPosition);
-            case PieceType.ROOK:
-                return new RookRule().pieceMoves(board, myPosition);
-            case PieceType.PAWN:
-                return new PawnRule().pieceMoves(board, myPosition);
-        }
-        return new ArrayList<>();
+        return switch (this.type) {
+            case PieceType.KING -> new KingRule().pieceMoves(board, myPosition);
+            case PieceType.QUEEN -> new QueenRule().pieceMoves(board, myPosition);
+            case PieceType.BISHOP -> new BishopRule().pieceMoves(board, myPosition);
+            case PieceType.KNIGHT -> new KnightRule().pieceMoves(board, myPosition);
+            case PieceType.ROOK -> new RookRule().pieceMoves(board, myPosition);
+            case PieceType.PAWN -> new PawnRule().pieceMoves(board, myPosition);
+        };
     }
 }
