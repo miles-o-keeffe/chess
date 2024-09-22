@@ -8,14 +8,11 @@ import chess.ChessPosition;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class KnightRule extends PieceRule {
+public class KnightRule {
 
-    public KnightRule() {
-        this.movementArray = new int[][]{{2, -1}, {2, 1}, {-1, 2}, {1, 2}, {-2, -1}, {-2, 1}, {-1, -2}, {1, -2}};
-    }
+    private static final int[][] movementArray = new int[][]{{2, -1}, {2, 1}, {-1, 2}, {1, 2}, {-2, -1}, {-2, 1}, {-1, -2}, {1, -2}};
 
-    @Override
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    public static Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         int checkRow;

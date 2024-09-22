@@ -8,13 +8,11 @@ import chess.ChessPosition;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class BishopRule extends PieceRule {
-    public BishopRule() {
-        this.movementArray = new int[][]{{1, -1}, {-1, 1}, {-1, -1}, {1, 1}};
-    }
+public class BishopRule {
 
-    @Override
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    private static final int[][] movementArray = new int[][]{{1, -1}, {-1, 1}, {-1, -1}, {1, 1}};
+
+    public static Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         int checkRow;

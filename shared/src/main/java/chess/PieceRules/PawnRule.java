@@ -5,13 +5,10 @@ import chess.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class PawnRule extends PieceRule {
-    public PawnRule() {
-        this.movementArray = new int[][]{{1, 0}, {1, -1}, {1, 1}};
-    }
+public class PawnRule {
+    private static final int[][] movementArray = new int[][]{{1, 0}, {1, -1}, {1, 1}};
 
-    @Override
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    public static Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ArrayList<ChessMove> validMoves = new ArrayList<>();
         ChessGame.TeamColor teamColor = board.getPiece(myPosition).getTeamColor();
 
@@ -24,7 +21,7 @@ public class PawnRule extends PieceRule {
         return validMoves;
     }
 
-    private ArrayList<ChessMove> pieceMovesBlack(ChessBoard board, ChessPosition myPosition, ArrayList<ChessMove> validMoves, ChessGame.TeamColor teamColor) {
+    private static ArrayList<ChessMove> pieceMovesBlack(ChessBoard board, ChessPosition myPosition, ArrayList<ChessMove> validMoves, ChessGame.TeamColor teamColor) {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         int checkRow;
@@ -62,7 +59,7 @@ public class PawnRule extends PieceRule {
         return validMoves;
     }
 
-    private ArrayList<ChessMove> pieceMovesWhite(ChessBoard board, ChessPosition myPosition, ArrayList<ChessMove> validMoves, ChessGame.TeamColor teamColor) {
+    private static ArrayList<ChessMove> pieceMovesWhite(ChessBoard board, ChessPosition myPosition, ArrayList<ChessMove> validMoves, ChessGame.TeamColor teamColor) {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         int checkRow;
@@ -100,7 +97,7 @@ public class PawnRule extends PieceRule {
         return validMoves;
     }
 
-    private ArrayList<ChessMove> addPromotionMoves(ChessPosition myPos, ChessPosition newPos, ArrayList<ChessMove> validMoves) {
+    private static ArrayList<ChessMove> addPromotionMoves(ChessPosition myPos, ChessPosition newPos, ArrayList<ChessMove> validMoves) {
         validMoves.add(new ChessMove(myPos, newPos, ChessPiece.PieceType.QUEEN));
         validMoves.add(new ChessMove(myPos, newPos, ChessPiece.PieceType.ROOK));
         validMoves.add(new ChessMove(myPos, newPos, ChessPiece.PieceType.KNIGHT));
