@@ -19,6 +19,14 @@ public class ChessBoard {
 
     }
 
+    public ChessBoard(ChessBoard copyBoard) {
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                this.squares[i - 1][j - 1] = copyBoard.getPiece(new ChessPosition(i, j));
+            }
+        }
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
@@ -88,5 +96,18 @@ public class ChessBoard {
         return "ChessBoard{" +
                 "squares=" + Arrays.toString(squares) +
                 '}';
+    }
+
+    public void forceMove(ChessMove move) {
+        if (move.getEndPosition().getRow() < 1 || move.getEndPosition().getRow() > 8 || move.getEndPosition().getColumn() < 1 || move.getEndPosition().getColumn() > 8) {
+            return;
+        }
+        if (move.getPromotionPiece() != null) {
+            squares[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = new ChessPiece(squares[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1].getTeamColor(), move.promotionPiece);
+            squares[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = null;
+        } else {
+            squares[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = squares[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1];
+            squares[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = null;
+        }
     }
 }
