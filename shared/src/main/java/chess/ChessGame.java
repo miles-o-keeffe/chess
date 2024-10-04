@@ -56,6 +56,14 @@ public class ChessGame {
         this.turn = team;
     }
 
+    private void changeTurns() {
+        if (this.getTeamTurn() == TeamColor.WHITE) {
+            setTeamTurn(TeamColor.BLACK);
+        } else {
+            setTeamTurn(TeamColor.WHITE);
+        }
+    }
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
@@ -79,11 +87,6 @@ public class ChessGame {
         TeamColor currentTeamColor = this.board.getPiece(startPosition).getTeamColor();
         Collection<ChessMove> validMoves = this.board.getPiece(startPosition).pieceMoves(board, startPosition);
 
-//        for (ChessMove move : validMoves) {
-//            if (!checkMove(move, currentTeamColor)) {
-//                validMoves.remove(move);
-//            }
-//        }
         validMoves.removeIf(move -> !checkMove(move, currentTeamColor));
 
         return validMoves;
@@ -101,6 +104,7 @@ public class ChessGame {
             throw new InvalidMoveException("Not implemented");
         } else if (validMoves.contains(move) && this.board.getPiece(move.startPosition).getTeamColor() == turn) {
             this.board.forceMove(move);
+            this.changeTurns();
         } else {
             throw new InvalidMoveException("Not implemented");
         }

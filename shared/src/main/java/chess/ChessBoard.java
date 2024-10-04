@@ -99,15 +99,11 @@ public class ChessBoard {
     }
 
     public void forceMove(ChessMove move) {
-        if (move.getEndPosition().getRow() < 1 || move.getEndPosition().getRow() > 8 || move.getEndPosition().getColumn() < 1 || move.getEndPosition().getColumn() > 8) {
-            return;
-        }
         if (move.getPromotionPiece() != null) {
             squares[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = new ChessPiece(squares[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1].getTeamColor(), move.promotionPiece);
-            squares[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = null;
         } else {
             squares[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = squares[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1];
-            squares[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = null;
         }
+        squares[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = null;
     }
 }
