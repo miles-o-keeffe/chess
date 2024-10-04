@@ -150,11 +150,9 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-//        if (teamColor == turn && isInCheck(teamColor)) {
-//            if (validMoves(findKing(teamColor)).isEmpty()) {
-//
-//            }
-//        }
+        if (teamColor == this.turn && isInCheck(teamColor)) {
+            return !this.getTeamValidMoves(teamColor);
+        }
         return false;
     }
 
@@ -173,6 +171,9 @@ public class ChessGame {
                 for (int j = 1; j < 9; j++) {
                     ChessPosition currentPos = new ChessPosition(i, j);
                     ChessPiece currentPiece = board.getPiece(currentPos);
+                    if (currentPiece == null) {
+                        continue;
+                    }
                     ChessGame.TeamColor currentColor = currentPiece.getTeamColor();
                     if (currentColor == teamColor) {
                         teamMoves.add(validMoves(currentPos));
@@ -213,6 +214,30 @@ public class ChessGame {
 
         this.board = new ChessBoard(originalBoard);
         return true;
+    }
+
+    /**
+     * Returns true is teamColors pieces have valid moves
+     * False otherwise
+     */
+    private boolean getTeamValidMoves(TeamColor teamColor) {
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition currentPos = new ChessPosition(i, j);
+                ChessPiece currentPiece = board.getPiece(currentPos);
+                if (currentPiece == null) {
+                    continue;
+                }
+                ChessGame.TeamColor currentColor = currentPiece.getTeamColor();
+                if (currentColor == teamColor) {
+                    if (!validMoves(currentPos).isEmpty()) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
