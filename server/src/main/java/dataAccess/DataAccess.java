@@ -21,7 +21,7 @@ public interface DataAccess {
 
     void updateGame();
 
-    AuthData createAuth();
+    AuthData createAuth(String userName);
 
     AuthData getAuth();
 

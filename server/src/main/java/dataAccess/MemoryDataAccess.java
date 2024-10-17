@@ -4,21 +4,24 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class MemoryDataAccess implements DataAccess {
-    // final private map<String, UserData> users = new HashMap<>();
+    final private ArrayList<UserData> users = new ArrayList<>();
+    final private ArrayList<GameData> games = new ArrayList<>();
+    final private ArrayList<AuthData> authentications = new ArrayList<>();
 
     @Override
     public void clear() {
-
+        users.clear();
+        games.clear();
+        authentications.clear();
     }
 
     @Override
     public UserData createUser(UserData newUser) {
-        return null;
+        users.add(newUser);
+        return newUser;
     }
 
     @Override
@@ -47,8 +50,10 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public AuthData createAuth() {
-        return null;
+    public AuthData createAuth(String userName) {
+        AuthData newAuthData = new AuthData("testAuthToken", userName);
+        authentications.add(newAuthData);
+        return newAuthData;
     }
 
     @Override
