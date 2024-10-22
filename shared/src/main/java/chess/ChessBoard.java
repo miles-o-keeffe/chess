@@ -1,8 +1,5 @@
 package chess;
 
-import chess.PieceRules.PawnRule;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 

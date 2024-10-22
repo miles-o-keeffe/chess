@@ -1,4 +1,4 @@
-package chess.PieceRules;
+package chess.piecerules;
 
 import chess.ChessBoard;
 import chess.ChessGame;
@@ -7,7 +7,6 @@ import chess.ChessPosition;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class KingRule {
 
