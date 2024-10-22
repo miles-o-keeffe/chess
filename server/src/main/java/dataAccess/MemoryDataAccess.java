@@ -19,7 +19,12 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public UserData createUser(UserData newUser) {
+    public UserData createUser(UserData newUser) throws DataAccessException {
+        for (UserData userData : users) {
+            if (Objects.equals(userData.username(), newUser.username())) {
+                throw new DataAccessException("Error: already taken");
+            }
+        }
         users.add(newUser);
         return newUser;
     }
@@ -51,7 +56,7 @@ public class MemoryDataAccess implements DataAccess {
 
     @Override
     public AuthData createAuth(String userName) {
-        AuthData newAuthData = new AuthData("testAuthToken", userName);
+        AuthData newAuthData = new AuthData(UUID.randomUUID().toString(), userName);
         authentications.add(newAuthData);
         return newAuthData;
     }
