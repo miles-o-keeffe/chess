@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class PawnRule {
-    private static final int[][] movementArray = new int[][]{{1, 0}, {1, -1}, {1, 1}};
+    private static final int[][] MOVEMENT_ARRAY = new int[][]{{1, 0}, {1, -1}, {1, 1}};
 
     public static Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ArrayList<ChessMove> validMoves = new ArrayList<>();
@@ -27,7 +27,7 @@ public class PawnRule {
         int checkRow;
         int checkCol;
 
-        for (int[] moves : movementArray) {
+        for (int[] moves : MOVEMENT_ARRAY) {
             checkRow = row;
             checkCol = col;
             checkRow = checkRow - moves[0];
@@ -65,7 +65,7 @@ public class PawnRule {
         int checkRow;
         int checkCol;
 
-        for (int[] moves : movementArray) {
+        for (int[] moves : MOVEMENT_ARRAY) {
             checkRow = row;
             checkCol = col;
             checkRow = checkRow + moves[0];

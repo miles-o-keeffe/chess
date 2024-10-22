@@ -10,28 +10,9 @@ import java.util.Collection;
 
 public class KingRule {
 
-    private static final int[][] movementArray = new int[][]{{1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}};
+    private static final int[][] MOVEMENT_ARRAY = new int[][]{{1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}};
 
     public static Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        int row = myPosition.getRow();
-        int col = myPosition.getColumn();
-        int checkRow;
-        int checkCol;
-        ChessGame.TeamColor teamColor = board.getPiece(myPosition).getTeamColor();
-        ArrayList<ChessMove> validMoves = new ArrayList<>();
-
-        for (int[] moves : movementArray) {
-            checkRow = row + moves[0];
-            checkCol = col + moves[1];
-            if (checkRow > 0 && checkRow < 9 && checkCol > 0 && checkCol < 9) {
-                if (board.getPiece(new ChessPosition(checkRow, checkCol)) == null) {
-                    validMoves.add(new ChessMove(myPosition, new ChessPosition(checkRow, checkCol), null));
-                } else if (board.getPiece(new ChessPosition(checkRow, checkCol)).getTeamColor() != teamColor) {
-                    validMoves.add(new ChessMove(myPosition, new ChessPosition(checkRow, checkCol), null));
-                }
-            }
-        }
-
-        return validMoves;
+        return OneMoveFinder.findMoves(board, myPosition, MOVEMENT_ARRAY);
     }
 }

@@ -104,7 +104,7 @@ public class Server {
         var serializer = new Gson();
         res.type("application/json");
         res.body(serializer.toJson(new ErrorResult(ex.getMessage())));
-        res.status(ex.StatusCode());
+        res.status(ex.statusCode());
         return serializer.toJson(new ErrorResult(ex.getMessage()));
     }
 

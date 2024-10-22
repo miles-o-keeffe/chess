@@ -10,7 +10,7 @@ import java.util.Collection;
 
 public class BishopRule {
 
-    private static final int[][] movementArray = new int[][]{{1, -1}, {-1, 1}, {-1, -1}, {1, 1}};
+    private static final int[][] MOVEMENT_ARRAY = new int[][]{{1, -1}, {-1, 1}, {-1, -1}, {1, 1}};
 
     public static Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         int row = myPosition.getRow();
@@ -20,7 +20,7 @@ public class BishopRule {
         ChessGame.TeamColor teamColor = board.getPiece(myPosition).getTeamColor();
         ArrayList<ChessMove> validMoves = new ArrayList<>();
 
-        for (int[] moves : movementArray) {
+        for (int[] moves : MOVEMENT_ARRAY) {
             checkRow = row;
             checkCol = col;
             while (true) {
