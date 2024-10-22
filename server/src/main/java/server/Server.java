@@ -28,6 +28,11 @@ public class Server {
         Spark.init();
         Spark.post("/user", this::createUser);
         Spark.delete("/db", this::clear);
+        Spark.post("/session", this::login);
+        Spark.delete("/session", this::logout);
+        Spark.get("/game", this::listGames);
+        Spark.post("/game", this::createGame);
+        Spark.put("/game", this::joinGame);
         Spark.exception(ResponseException.class, this::responseExceptionHandler);
         Spark.exception(Exception.class, this::generalExceptionHandler);
         Spark.notFound((req, res) -> {
@@ -55,6 +60,26 @@ public class Server {
     private Object clear(Request req, Response res) throws ResponseException {
         service.clear();
         return new Gson().toJson(new ClearResult());
+    }
+
+    private Object login(Request req, Response res) throws ResponseException, DataAccessException {
+        return "";
+    }
+
+    private Object logout(Request req, Response res) throws ResponseException, DataAccessException {
+        return "";
+    }
+
+    private Object listGames(Request req, Response res) throws ResponseException, DataAccessException {
+        return "";
+    }
+
+    private Object createGame(Request req, Response res) throws ResponseException, DataAccessException {
+        return "";
+    }
+
+    private Object joinGame(Request req, Response res) throws ResponseException, DataAccessException {
+        return "";
     }
 
     private Object responseExceptionHandler(ResponseException ex, Request req, Response res) {

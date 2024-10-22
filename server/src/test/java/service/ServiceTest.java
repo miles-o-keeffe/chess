@@ -1,8 +1,10 @@
 package service;
 
+import dataAccess.DataAccessException;
 import exception.ResponseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import request.RegisterRequest;
 
 class ServiceTest {
     static final Service service = new Service();
@@ -13,7 +15,12 @@ class ServiceTest {
     }
 
     @Test
-    void positiveRegister() throws ResponseException {
+    void positiveRegister() throws ResponseException, DataAccessException {
+        RegisterRequest testRegister = new RegisterRequest("test_username", "test_password", "test_email");
+        service.register(testRegister);
 
+        // Get user
+
+        // Get authData
     }
 }
