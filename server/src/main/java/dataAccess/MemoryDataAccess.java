@@ -12,7 +12,7 @@ public class MemoryDataAccess implements DataAccess {
     final private ArrayList<AuthData> authentications = new ArrayList<>();
 
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException {
         users.clear();
         games.clear();
         authentications.clear();
@@ -30,44 +30,44 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public UserData getUser(String userName) {
+    public UserData getUser(String userName) throws DataAccessException {
         return null;
     }
 
     @Override
-    public int createGame() {
+    public int createGame() throws DataAccessException {
         return 0;
     }
 
     @Override
-    public GameData getGame() {
+    public GameData getGame() throws DataAccessException {
         return null;
     }
 
     @Override
-    public Collection<GameData> listGame() {
+    public Collection<GameData> listGame() throws DataAccessException {
         return List.of();
     }
 
     @Override
-    public void updateGame() {
+    public void updateGame() throws DataAccessException {
 
     }
 
     @Override
-    public AuthData createAuth(String userName) {
+    public AuthData createAuth(String userName) throws DataAccessException {
         AuthData newAuthData = new AuthData(UUID.randomUUID().toString(), userName);
         authentications.add(newAuthData);
         return newAuthData;
     }
 
     @Override
-    public AuthData getAuth() {
+    public AuthData getAuth() throws DataAccessException {
         return null;
     }
 
     @Override
-    public void deleteAuth() {
+    public void deleteAuth() throws DataAccessException {
 
     }
 }

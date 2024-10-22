@@ -1,8 +1,10 @@
 package server;
 
 import com.google.gson.Gson;
+import dataAccess.DataAccessException;
 import exception.ResponseException;
 import request.RegisterRequest;
+import result.ClearResult;
 import result.ErrorResult;
 import result.RegisterResult;
 import service.Service;
@@ -25,21 +27,23 @@ public class Server {
         //This line initializes the server and can be removed once you have a functioning endpoint
         Spark.init();
         Spark.post("/user", this::createUser);
-        //  Spark.delete("/clear", this::clear);
+        Spark.delete("/db", this::clear);
         Spark.exception(ResponseException.class, this::responseExceptionHandler);
         Spark.exception(Exception.class, this::generalExceptionHandler);
         Spark.notFound((req, res) -> {
             var serializer = new Gson();
             var msg = String.format("[%s] %s not found", req.requestMethod(), req.pathInfo());
             res.status(404);
-            return serializer.toJson(new ResponseException(404, msg));
+            res.type("application/json");
+            res.body(serializer.toJson(new ErrorResult(msg)));
+            return serializer.toJson(new ErrorResult(msg));
         });
 
         Spark.awaitInitialization();
         return Spark.port();
     }
 
-    private Object createUser(Request req, Response res) throws ResponseException {
+    private Object createUser(Request req, Response res) throws ResponseException, DataAccessException {
         RegisterRequest newUser = new Gson().fromJson(req.body(), RegisterRequest.class);
         if (newUser.email().isBlank() || newUser.username().isBlank() || newUser.password().isBlank()) {
             return responseExceptionHandler(new ResponseException(400, "Error: bad request"), req, res);
@@ -48,10 +52,9 @@ public class Server {
         return new Gson().toJson(newAuthData);
     }
 
-    private Object clear(Request req, Response res) {
-        var serializer = new Gson();
+    private Object clear(Request req, Response res) throws ResponseException {
         service.clear();
-        return "";
+        return new Gson().toJson(new ClearResult());
     }
 
     private Object responseExceptionHandler(ResponseException ex, Request req, Response res) {

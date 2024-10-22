@@ -12,7 +12,7 @@ import result.RegisterResult;
 public class Service {
     private final DataAccess dataAccess = new MemoryDataAccess();
 
-    public RegisterResult register(RegisterRequest request) throws ResponseException {
+    public RegisterResult register(RegisterRequest request) throws ResponseException, DataAccessException {
         UserData newUser = new UserData(request.username(), request.password(), request.email());
         try {
             dataAccess.createUser(newUser);
@@ -30,7 +30,12 @@ public class Service {
     public void logout(AuthData auth) {
     }
 
-    public void clear() {
+    public void clear() throws ResponseException {
+        try {
+            dataAccess.clear();
+        } catch (DataAccessException e) {
+            throw new ResponseException(500, e.getMessage());
+        }
     }
 
     public int createGame(UserData user) {
