@@ -15,11 +15,11 @@ public interface DataAccess {
 
     int createGame(String gameName) throws DataAccessException; // Returns the gameID
 
-    GameData getGame() throws DataAccessException;
+    GameData getGame(int gameID) throws DataAccessException;
 
     Collection<GameData> listGame() throws DataAccessException;
 
-    void updateGame() throws DataAccessException;
+    void updateGame(GameData gameData) throws DataAccessException;
 
     AuthData createAuth(String userName) throws DataAccessException;
 

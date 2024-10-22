@@ -57,7 +57,12 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public GameData getGame() throws DataAccessException {
+    public GameData getGame(int gameID) throws DataAccessException {
+        for (GameData gameData : games) {
+            if (gameData.gameID() == gameID) {
+                return gameData;
+            }
+        }
         return null;
     }
 
@@ -67,8 +72,12 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void updateGame() throws DataAccessException {
-
+    public void updateGame(GameData gameData) throws DataAccessException {
+        for (int i = 0; i < games.size(); i++) {
+            if (games.get(i).gameID() == gameData.gameID()) {
+                games.set(i, gameData);
+            }
+        }
     }
 
     @Override

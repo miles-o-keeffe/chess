@@ -85,14 +85,19 @@ public class Server {
 
     private Object createGame(Request req, Response res) throws ResponseException, DataAccessException {
         var authToken = req.headers("Authorization");
-        String gameName = new Gson().fromJson(req.body(), String.class);
-        CreateGameRequest createGameRequest = new CreateGameRequest(authToken, gameName);
-        CreateGameResult createGameResult = service.createGame(createGameRequest);
+        CreateGameRequest createGameRequest = new Gson().fromJson(req.body(), CreateGameRequest.class);
+        if (createGameRequest.gameName().isBlank()) {
+            return responseExceptionHandler(new ResponseException(400, "Error: bad request"), req, res);
+        }
+        CreateGameResult createGameResult = service.createGame(createGameRequest, authToken);
         return new Gson().toJson(createGameResult);
     }
 
     private Object joinGame(Request req, Response res) throws ResponseException, DataAccessException {
-        return "";
+        var authToken = req.headers("Authorization");
+        JoinGameRequest joinGameRequest = new Gson().fromJson(req.body(), JoinGameRequest.class);
+        JoinGameResult joinGameResult = service.joinGame(joinGameRequest, authToken);
+        return new Gson().toJson(joinGameResult);
     }
 
     private Object responseExceptionHandler(ResponseException ex, Request req, Response res) {

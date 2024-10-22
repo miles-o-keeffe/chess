@@ -79,15 +79,46 @@ public class Service {
         return listGamesResult;
     }
 
-    public CreateGameResult createGame(CreateGameRequest createGameRequest) throws DataAccessException, ResponseException {
-        authenticate(createGameRequest.authToken());
+    public CreateGameResult createGame(CreateGameRequest createGameRequest, String authToken) throws DataAccessException, ResponseException {
+        authenticate(authToken);
 
         int gameID = dataAccess.createGame(createGameRequest.gameName());
 
         return new CreateGameResult(gameID);
     }
 
-    public void joinGame(AuthData auth) {
+    public JoinGameResult joinGame(JoinGameRequest joinGameRequest, String authToken) throws ResponseException, DataAccessException {
+        authenticate(authToken);
+        GameData gameData = dataAccess.getGame(joinGameRequest.gameID());
+
+        if (gameData == null) {
+            throw new ResponseException(500, "Error: no such game exists");
+        }
+
+        if ((Objects.equals(joinGameRequest.playerColor(), "WHITE") && gameData.whiteUsername() != null)
+                || (Objects.equals(joinGameRequest.playerColor(), "BLACK") && gameData.blackUsername() != null)) {
+            throw new ResponseException(403, "Error: already taken");
+        }
+
+        String username = dataAccess.getAuth(authToken).username();
+
+        GameData newGameData = getGameData(joinGameRequest, username, gameData);
+
+        dataAccess.updateGame(newGameData);
+
+        return new JoinGameResult();
+    }
+
+    private static GameData getGameData(JoinGameRequest joinGameRequest, String username, GameData gameData) throws ResponseException {
+        GameData newGameData;
+        if (Objects.equals(joinGameRequest.playerColor(), "WHITE")) {
+            newGameData = new GameData(joinGameRequest.gameID(), username, gameData.blackUsername(), gameData.gameName(), gameData.game());
+        } else if (Objects.equals(joinGameRequest.playerColor(), "BLACK")) {
+            newGameData = new GameData(joinGameRequest.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.game());
+        } else {
+            throw new ResponseException(400, "Error: bad request");
+        }
+        return newGameData;
     }
 
     private AuthData authenticate(String authToken) throws DataAccessException, ResponseException {
