@@ -22,15 +22,6 @@ public class Service {
         if (userCreated == null) {
             throw new ResponseException(403, "Error: already taken");
         }
-//        try {
-//            dataAccess.createUser(newUser);
-//        } catch (DataAccessException e) {
-//            int errorCode = 500;
-//            if (Objects.equals(e.getMessage(), "Error: already taken")) {
-//                errorCode = 403;
-//            }
-//            throw new ResponseException(errorCode, e.getMessage());
-//        }
         AuthData newAuthData = dataAccess.createAuth(newUser.username());
         return new RegisterResult(newAuthData.username(), newAuthData.authToken());
     }
@@ -38,7 +29,7 @@ public class Service {
     public LoginResult login(LoginRequest loginRequest) throws ResponseException, DataAccessException {
         var userData = dataAccess.getUser(loginRequest.username());
         if (userData == null) {
-            throw new ResponseException(500, "Error: no such username exists");
+            throw new ResponseException(401, "Error: unauthorized");
         }
 
         if (!Objects.equals(userData.password(), loginRequest.password())) {
@@ -73,7 +64,7 @@ public class Service {
             return listGamesResult;
         }
         for (GameData gameData : listOfGames) {
-            listGamesResult.listOfGames().add(new ListGameData(gameData.gameID(), gameData.whiteUsername(),
+            listGamesResult.games().add(new ListGameData(gameData.gameID(), gameData.whiteUsername(),
                     gameData.blackUsername(), gameData.gameName()));
         }
         return listGamesResult;

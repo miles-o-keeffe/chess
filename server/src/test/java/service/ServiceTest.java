@@ -7,17 +7,17 @@ import org.junit.jupiter.api.Test;
 import request.RegisterRequest;
 
 class ServiceTest {
-    static final Service service = new Service();
+    static final Service SERVICE = new Service();
 
     @BeforeEach
     void clear() throws ResponseException {
-        service.clear();
+        SERVICE.clear();
     }
 
     @Test
     void positiveRegister() throws ResponseException, DataAccessException {
         RegisterRequest testRegister = new RegisterRequest("test_username", "test_password", "test_email");
-        service.register(testRegister);
+        SERVICE.register(testRegister);
 
         // Get user
 

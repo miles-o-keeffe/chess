@@ -48,7 +48,9 @@ public class Server {
 
     private Object createUser(Request req, Response res) throws ResponseException, DataAccessException {
         RegisterRequest newUser = new Gson().fromJson(req.body(), RegisterRequest.class);
-        if (newUser.email().isBlank() || newUser.username().isBlank() || newUser.password().isBlank()) {
+        if (newUser.email() == null || newUser.username() == null || newUser.password() == null) {
+            return responseExceptionHandler(new ResponseException(400, "Error: bad request"), req, res);
+        } else if (newUser.email().isBlank() || newUser.username().isBlank() || newUser.password().isBlank()) {
             return responseExceptionHandler(new ResponseException(400, "Error: bad request"), req, res);
         }
         RegisterResult newAuthData = service.register(newUser);
@@ -96,6 +98,9 @@ public class Server {
     private Object joinGame(Request req, Response res) throws ResponseException, DataAccessException {
         var authToken = req.headers("Authorization");
         JoinGameRequest joinGameRequest = new Gson().fromJson(req.body(), JoinGameRequest.class);
+        if (joinGameRequest.gameID() < 1 || joinGameRequest.playerColor() == null) {
+            return responseExceptionHandler(new ResponseException(400, "Error: bad request"), req, res);
+        }
         JoinGameResult joinGameResult = service.joinGame(joinGameRequest, authToken);
         return new Gson().toJson(joinGameResult);
     }

@@ -2,5 +2,5 @@ package result;
 
 import java.util.ArrayList;
 
-public record ListGamesResult(ArrayList<ListGameData> listOfGames) {
+public record ListGamesResult(ArrayList<ListGameData> games) {
 }
