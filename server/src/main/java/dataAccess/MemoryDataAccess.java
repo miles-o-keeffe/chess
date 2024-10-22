@@ -22,7 +22,7 @@ public class MemoryDataAccess implements DataAccess {
     public UserData createUser(UserData newUser) throws DataAccessException {
         for (UserData userData : users) {
             if (Objects.equals(userData.username(), newUser.username())) {
-                throw new DataAccessException("Error: already taken");
+                return null;
             }
         }
         users.add(newUser);
@@ -31,6 +31,11 @@ public class MemoryDataAccess implements DataAccess {
 
     @Override
     public UserData getUser(String userName) throws DataAccessException {
+        for (UserData userData : users) {
+            if (Objects.equals(userData.username(), userName)) {
+                return userData;
+            }
+        }
         return null;
     }
 

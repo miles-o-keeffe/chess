@@ -3,9 +3,11 @@ package server;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import exception.ResponseException;
+import request.LoginRequest;
 import request.RegisterRequest;
 import result.ClearResult;
 import result.ErrorResult;
+import result.LoginResult;
 import result.RegisterResult;
 import service.Service;
 import spark.*;
@@ -63,7 +65,12 @@ public class Server {
     }
 
     private Object login(Request req, Response res) throws ResponseException, DataAccessException {
-        return "";
+        LoginRequest loginAttempt = new Gson().fromJson(req.body(), LoginRequest.class);
+        if (loginAttempt.username().isBlank() || loginAttempt.password().isBlank()) {
+            return responseExceptionHandler(new ResponseException(400, "Error: bad request"), req, res);
+        }
+        LoginResult newAuthData = service.login(loginAttempt);
+        return new Gson().toJson(newAuthData);
     }
 
     private Object logout(Request req, Response res) throws ResponseException, DataAccessException {
