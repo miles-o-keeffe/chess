@@ -23,7 +23,7 @@ public interface DataAccess {
 
     AuthData createAuth(String userName) throws DataAccessException;
 
-    AuthData getAuth() throws DataAccessException;
+    AuthData getAuth(String authToken) throws DataAccessException;
 
-    void deleteAuth() throws DataAccessException;
+    void deleteAuth(AuthData authData) throws DataAccessException;
 }

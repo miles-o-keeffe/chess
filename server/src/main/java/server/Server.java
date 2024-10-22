@@ -4,11 +4,9 @@ import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import exception.ResponseException;
 import request.LoginRequest;
+import request.LogoutRequest;
 import request.RegisterRequest;
-import result.ClearResult;
-import result.ErrorResult;
-import result.LoginResult;
-import result.RegisterResult;
+import result.*;
 import service.Service;
 import spark.*;
 
@@ -74,7 +72,10 @@ public class Server {
     }
 
     private Object logout(Request req, Response res) throws ResponseException, DataAccessException {
-        return "";
+        var authToken = req.headers("Authorization");
+        LogoutRequest logoutRequest = new LogoutRequest(authToken);
+        LogoutResult logoutResult = service.logout(logoutRequest);
+        return new Gson().toJson(logoutResult);
     }
 
     private Object listGames(Request req, Response res) throws ResponseException, DataAccessException {

@@ -7,8 +7,10 @@ import exception.ResponseException;
 import model.AuthData;
 import model.UserData;
 import request.LoginRequest;
+import request.LogoutRequest;
 import request.RegisterRequest;
 import result.LoginResult;
+import result.LogoutResult;
 import result.RegisterResult;
 
 import java.util.Objects;
@@ -49,7 +51,15 @@ public class Service {
         return new LoginResult(newAuthData.username(), newAuthData.authToken());
     }
 
-    public void logout(AuthData auth) {
+    public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException, ResponseException {
+        AuthData authData = dataAccess.getAuth(logoutRequest.authToken());
+
+        if (authData == null) {
+            throw new ResponseException(401, "Error: unauthorized");
+        }
+
+        dataAccess.deleteAuth(authData);
+        return new LogoutResult();
     }
 
     public void clear() throws ResponseException {
