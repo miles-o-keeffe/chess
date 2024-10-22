@@ -87,8 +87,8 @@ public class Server {
         var authToken = req.headers("Authorization");
         String gameName = new Gson().fromJson(req.body(), String.class);
         CreateGameRequest createGameRequest = new CreateGameRequest(authToken, gameName);
-        
-        return "";
+        CreateGameResult createGameResult = service.createGame(createGameRequest);
+        return new Gson().toJson(createGameResult);
     }
 
     private Object joinGame(Request req, Response res) throws ResponseException, DataAccessException {

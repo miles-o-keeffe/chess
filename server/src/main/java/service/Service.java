@@ -7,10 +7,7 @@ import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import request.ListGamesRequest;
-import request.LoginRequest;
-import request.LogoutRequest;
-import request.RegisterRequest;
+import request.*;
 import result.*;
 
 import java.util.ArrayList;
@@ -53,11 +50,7 @@ public class Service {
     }
 
     public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException, ResponseException {
-        AuthData authData = dataAccess.getAuth(logoutRequest.authToken());
-
-        if (authData == null) {
-            throw new ResponseException(401, "Error: unauthorized");
-        }
+        AuthData authData = authenticate(logoutRequest.authToken());
 
         dataAccess.deleteAuth(authData);
         return new LogoutResult();
@@ -72,11 +65,7 @@ public class Service {
     }
 
     public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws ResponseException, DataAccessException {
-        AuthData authData = dataAccess.getAuth(listGamesRequest.authToken());
-
-        if (authData == null) {
-            throw new ResponseException(401, "Error: unauthorized");
-        }
+        authenticate(listGamesRequest.authToken());
 
         var listOfGames = dataAccess.listGame();
         ListGamesResult listGamesResult = new ListGamesResult(new ArrayList<>());
@@ -90,10 +79,24 @@ public class Service {
         return listGamesResult;
     }
 
-    public int createGame(UserData user) {
-        return 0;
+    public CreateGameResult createGame(CreateGameRequest createGameRequest) throws DataAccessException, ResponseException {
+        authenticate(createGameRequest.authToken());
+
+        int gameID = dataAccess.createGame(createGameRequest.gameName());
+
+        return new CreateGameResult(gameID);
     }
 
     public void joinGame(AuthData auth) {
+    }
+
+    private AuthData authenticate(String authToken) throws DataAccessException, ResponseException {
+        AuthData authData = dataAccess.getAuth(authToken);
+
+        if (authData == null) {
+            throw new ResponseException(401, "Error: unauthorized");
+        }
+
+        return authData;
     }
 }

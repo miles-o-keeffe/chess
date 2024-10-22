@@ -1,5 +1,6 @@
 package dataAccess;
 
+import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -40,8 +41,19 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public int createGame() throws DataAccessException {
-        return 0;
+    public int createGame(String gameName) throws DataAccessException {
+        Set<Integer> existingIds = new HashSet<>();
+        int newGameID = 1;
+        for (GameData gameData : games) {
+            existingIds.add(gameData.gameID());
+        }
+
+        while (existingIds.contains(newGameID)) {
+            newGameID += 1;
+        }
+        games.add(new GameData(newGameID, null, null, gameName, new ChessGame()));
+
+        return newGameID;
     }
 
     @Override

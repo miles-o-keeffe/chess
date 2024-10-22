@@ -13,7 +13,7 @@ public interface DataAccess {
 
     UserData getUser(String userName) throws DataAccessException;
 
-    int createGame() throws DataAccessException; // Returns the gameID
+    int createGame(String gameName) throws DataAccessException; // Returns the gameID
 
     GameData getGame() throws DataAccessException;
 
