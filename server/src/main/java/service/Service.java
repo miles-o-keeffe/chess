@@ -5,14 +5,15 @@ import dataAccess.DataAccessException;
 import dataAccess.MemoryDataAccess;
 import exception.ResponseException;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
+import request.ListGamesRequest;
 import request.LoginRequest;
 import request.LogoutRequest;
 import request.RegisterRequest;
-import result.LoginResult;
-import result.LogoutResult;
-import result.RegisterResult;
+import result.*;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Service {
@@ -68,6 +69,25 @@ public class Service {
         } catch (DataAccessException e) {
             throw new ResponseException(500, e.getMessage());
         }
+    }
+
+    public ListGamesResult listGames(ListGamesRequest listGamesRequest) throws ResponseException, DataAccessException {
+        AuthData authData = dataAccess.getAuth(listGamesRequest.authToken());
+
+        if (authData == null) {
+            throw new ResponseException(401, "Error: unauthorized");
+        }
+
+        var listOfGames = dataAccess.listGame();
+        ListGamesResult listGamesResult = new ListGamesResult(new ArrayList<>());
+        if (listOfGames == null) {
+            return listGamesResult;
+        }
+        for (GameData gameData : listOfGames) {
+            listGamesResult.listOfGames().add(new ListGameData(gameData.gameID(), gameData.whiteUsername(),
+                    gameData.blackUsername(), gameData.gameName()));
+        }
+        return listGamesResult;
     }
 
     public int createGame(UserData user) {

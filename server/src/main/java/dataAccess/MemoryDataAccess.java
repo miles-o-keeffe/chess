@@ -51,7 +51,7 @@ public class MemoryDataAccess implements DataAccess {
 
     @Override
     public Collection<GameData> listGame() throws DataAccessException {
-        return List.of();
+        return new ArrayList<>(games);
     }
 
     @Override

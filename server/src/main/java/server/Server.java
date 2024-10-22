@@ -3,9 +3,7 @@ package server;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import exception.ResponseException;
-import request.LoginRequest;
-import request.LogoutRequest;
-import request.RegisterRequest;
+import request.*;
 import result.*;
 import service.Service;
 import spark.*;
@@ -79,10 +77,17 @@ public class Server {
     }
 
     private Object listGames(Request req, Response res) throws ResponseException, DataAccessException {
-        return "";
+        var authToken = req.headers("Authorization");
+        ListGamesRequest listGamesRequest = new ListGamesRequest(authToken);
+        ListGamesResult listOfGames = service.listGames(listGamesRequest);
+        return new Gson().toJson(listOfGames);
     }
 
     private Object createGame(Request req, Response res) throws ResponseException, DataAccessException {
+        var authToken = req.headers("Authorization");
+        String gameName = new Gson().fromJson(req.body(), String.class);
+        CreateGameRequest createGameRequest = new CreateGameRequest(authToken, gameName);
+        
         return "";
     }
 
