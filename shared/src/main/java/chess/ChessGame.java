@@ -17,8 +17,12 @@ public class ChessGame {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessGame chessGame = (ChessGame) o;
         return Objects.equals(getBoard(), chessGame.getBoard()) && turn == chessGame.turn;
     }
@@ -123,7 +127,9 @@ public class ChessGame {
         }
 
         for (int i = 1; i < 9; i++) {
-            if (inCheckLogic(teamColor, i, kingPos)) return true;
+            if (inCheckLogic(teamColor, i, kingPos)) {
+                return true;
+            }
         }
 
         return false;

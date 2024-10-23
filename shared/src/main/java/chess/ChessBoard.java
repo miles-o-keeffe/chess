@@ -47,8 +47,12 @@ public class ChessBoard {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessBoard that = (ChessBoard) o;
         return Objects.deepEquals(squares, that.squares);
     }
@@ -97,9 +101,12 @@ public class ChessBoard {
 
     public void forceMove(ChessMove move) {
         if (move.getPromotionPiece() != null) {
-            squares[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = new ChessPiece(squares[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1].getTeamColor(), move.promotionPiece);
+            var teamColor = squares[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1].getTeamColor();
+            var newPiece = new ChessPiece(teamColor, move.promotionPiece);
+            squares[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = newPiece;
         } else {
-            squares[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = squares[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1];
+            var newPiece = squares[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1];
+            squares[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = newPiece;
         }
         squares[move.getStartPosition().getRow() - 1][move.getStartPosition().getColumn() - 1] = null;
     }
