@@ -57,7 +57,9 @@ public class PawnRule {
             checkCol = col;
             checkRow = checkRow + (checkPromote * moves[0]);
             checkCol = checkCol + (checkPromote * moves[1]);
-            validMoves = pawnMoveLogic(board, myPosition, validMoves, teamColor, moves, checkRow, checkCol, row, startingRow, checkPromote, promoteRow);
+            validMoves = pawnMoveLogic(board, myPosition,
+                    validMoves, teamColor, moves,
+                    checkRow, checkCol, row, startingRow, checkPromote, promoteRow);
         }
 
         return validMoves;
