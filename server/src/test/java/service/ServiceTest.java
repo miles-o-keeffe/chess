@@ -11,6 +11,8 @@ import org.junit.jupiter.api.*;
 import request.CreateGameRequest;
 import request.RegisterRequest;
 
+import java.util.Locale;
+
 class ServiceTest {
     private static final DataAccess DATA_ACCESS = new MemoryDataAccess();
     private static final Service SERVICE = new Service(DATA_ACCESS);
@@ -18,6 +20,7 @@ class ServiceTest {
     private final String testPassword = "test_password";
     private final String testEmail = "test_email";
     private final String testGameName = "test_game";
+    private final RegisterRequest testRegister = new RegisterRequest(testUsername, testPassword, testEmail);
 
     @BeforeEach
     void clear() throws ResponseException {
@@ -39,7 +42,6 @@ class ServiceTest {
 
     @Test
     void positiveRegister() throws ResponseException, DataAccessException {
-        RegisterRequest testRegister = new RegisterRequest(testUsername, testPassword, testEmail);
         SERVICE.register(testRegister);
 
         UserData userData = DATA_ACCESS.getUser(testUsername);
@@ -53,7 +55,21 @@ class ServiceTest {
     }
 
     @Test
-    void negativeRegister() {
+    void negativeRegister() throws ResponseException, DataAccessException {
+        SERVICE.register(testRegister);
+        Assertions.assertThrows(ResponseException.class, () -> {
+            SERVICE.register(testRegister);
+        });
+
+        RegisterRequest testRegNull = new RegisterRequest(null, null, null);
+        Assertions.assertThrows(ResponseException.class, () -> {
+            SERVICE.register(testRegNull);
+        });
+
+        RegisterRequest testRegPartialNull = new RegisterRequest("hello", null, "hello");
+        Assertions.assertThrows(ResponseException.class, () -> {
+            SERVICE.register(testRegPartialNull);
+        });
     }
 
     @Test
