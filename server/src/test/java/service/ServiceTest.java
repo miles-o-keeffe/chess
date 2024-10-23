@@ -31,7 +31,8 @@ class ServiceTest {
     @Test
     void clearTest() throws ResponseException, DataAccessException {
         for (int i = 0; i < 10; i++) {
-            RegisterRequest testRegister = new RegisterRequest(testUsername + ((char) i), testPassword + ((char) i), testEmail + ((char) i));
+            RegisterRequest testRegister = new RegisterRequest(testUsername + ((char) i),
+                    testPassword + ((char) i), testEmail + ((char) i));
             SERVICE.register(testRegister);
             DATA_ACCESS.createGame(testGameName + ((char) i));
         }
@@ -170,6 +171,7 @@ class ServiceTest {
             SERVICE.listGames(new ListGamesRequest("bad-auth-token"));
         });
         Assertions.assertEquals(responseException.statusCode(), 401);
+        Assertions.assertEquals(responseException.getMessage(), "Error: unauthorized");
     }
 
     @Test
@@ -186,6 +188,30 @@ class ServiceTest {
 
     @Test
     void negativeJoinGame() throws ResponseException, DataAccessException {
+        RegisterResult registerResult = SERVICE.register(testRegister);
+        CreateGameResult createGameResult = SERVICE.createGame(new CreateGameRequest("testGameName"), registerResult.authToken());
+        ResponseException responseException = Assertions.assertThrows(ResponseException.class, () -> {
+            SERVICE.joinGame(new JoinGameRequest("WHITE", createGameResult.gameID()), "bad-auth-token");
+        });
+        Assertions.assertEquals(responseException.statusCode(), 401);
+        Assertions.assertEquals(responseException.getMessage(), "Error: unauthorized");
 
+        responseException = Assertions.assertThrows(ResponseException.class, () -> {
+            SERVICE.joinGame(new JoinGameRequest("WHITE", 100000), registerResult.authToken());
+        });
+        Assertions.assertEquals(responseException.statusCode(), 500);
+
+        responseException = Assertions.assertThrows(ResponseException.class, () -> {
+            SERVICE.joinGame(new JoinGameRequest("CrazyColor", createGameResult.gameID()), registerResult.authToken());
+        });
+        Assertions.assertEquals(responseException.statusCode(), 400);
+        Assertions.assertEquals(responseException.getMessage(), "Error: bad request");
+
+        SERVICE.joinGame(new JoinGameRequest("WHITE", createGameResult.gameID()), registerResult.authToken());
+        responseException = Assertions.assertThrows(ResponseException.class, () -> {
+            SERVICE.joinGame(new JoinGameRequest("WHITE", createGameResult.gameID()), registerResult.authToken());
+        });
+        Assertions.assertEquals(responseException.statusCode(), 403);
+        Assertions.assertEquals(responseException.getMessage(), "Error: already taken");
     }
 }
