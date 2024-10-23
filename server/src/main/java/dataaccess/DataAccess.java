@@ -4,6 +4,7 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public interface DataAccess {
@@ -19,7 +20,7 @@ public interface DataAccess {
 
     GameData getGame(int gameID) throws DataAccessException;
 
-    Collection<GameData> listGame() throws DataAccessException;
+    ArrayList<GameData> listGame() throws DataAccessException;
 
     void updateGame(GameData gameData) throws DataAccessException;
 

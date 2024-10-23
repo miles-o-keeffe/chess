@@ -71,7 +71,7 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public Collection<GameData> listGame() throws DataAccessException {
+    public ArrayList<GameData> listGame() throws DataAccessException {
         return new ArrayList<>(games);
     }
 
