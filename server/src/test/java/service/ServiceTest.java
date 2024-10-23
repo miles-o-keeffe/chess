@@ -20,7 +20,6 @@ class ServiceTest {
     private final String testUsername = "test_username";
     private final String testPassword = "test_password";
     private final String testEmail = "test_email";
-    private final String testGameName = "test_game";
     private final RegisterRequest testRegister = new RegisterRequest(testUsername, testPassword, testEmail);
 
     @BeforeEach
@@ -34,6 +33,7 @@ class ServiceTest {
             RegisterRequest testRegister = new RegisterRequest(testUsername + ((char) i),
                     testPassword + ((char) i), testEmail + ((char) i));
             SERVICE.register(testRegister);
+            String testGameName = "test_game";
             DATA_ACCESS.createGame(testGameName + ((char) i));
         }
 
