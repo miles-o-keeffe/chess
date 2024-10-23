@@ -21,16 +21,19 @@ public class PawnRule {
         return validMoves;
     }
 
-    private static ArrayList<ChessMove> pieceMovesBlack(ChessBoard board, ChessPosition myPosition, ArrayList<ChessMove> validMoves, ChessGame.TeamColor teamColor) {
+    private static ArrayList<ChessMove> pieceMovesBlack(ChessBoard board, ChessPosition myPosition,
+                                                        ArrayList<ChessMove> validMoves, ChessGame.TeamColor teamColor) {
         return findPawnMoves(board, myPosition, validMoves, teamColor);
     }
 
-    private static ArrayList<ChessMove> pieceMovesWhite(ChessBoard board, ChessPosition myPosition, ArrayList<ChessMove> validMoves, ChessGame.TeamColor teamColor) {
+    private static ArrayList<ChessMove> pieceMovesWhite(ChessBoard board, ChessPosition myPosition,
+                                                        ArrayList<ChessMove> validMoves, ChessGame.TeamColor teamColor) {
 
         return findPawnMoves(board, myPosition, validMoves, teamColor);
     }
 
-    private static ArrayList<ChessMove> findPawnMoves(ChessBoard board, ChessPosition myPosition, ArrayList<ChessMove> validMoves, ChessGame.TeamColor teamColor) {
+    private static ArrayList<ChessMove> findPawnMoves(ChessBoard board, ChessPosition myPosition,
+                                                      ArrayList<ChessMove> validMoves, ChessGame.TeamColor teamColor) {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         int checkRow;
