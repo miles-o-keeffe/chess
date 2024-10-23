@@ -14,7 +14,11 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Service {
-    private final DataAccess dataAccess = new MemoryDataAccess();
+    private final DataAccess dataAccess;
+
+    public Service(DataAccess dataAccess) {
+        this.dataAccess = dataAccess;
+    }
 
     public RegisterResult register(RegisterRequest request) throws ResponseException, DataAccessException {
         UserData newUser = new UserData(request.username(), request.password(), request.email());

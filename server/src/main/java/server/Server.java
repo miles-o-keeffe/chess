@@ -1,7 +1,9 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
+import dataaccess.MemoryDataAccess;
 import exception.ResponseException;
 import request.*;
 import result.*;
@@ -9,7 +11,8 @@ import service.Service;
 import spark.*;
 
 public class Server {
-    private final Service service = new Service();
+    private final DataAccess dataAccess = new MemoryDataAccess();
+    private final Service service = new Service(dataAccess);
 
     public Server() {
 
