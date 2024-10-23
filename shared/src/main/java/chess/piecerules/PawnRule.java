@@ -60,7 +60,9 @@ public class PawnRule {
         return validMoves;
     }
 
-    private static ArrayList<ChessMove> pawnMoveLogic(ChessBoard board, ChessPosition myPosition, ArrayList<ChessMove> validMoves, ChessGame.TeamColor teamColor, int[] moves, int checkRow, int checkCol, int row, int startingRow, int checkPromote, int promoteRow) {
+    private static ArrayList<ChessMove> pawnMoveLogic(ChessBoard board, ChessPosition myPosition,
+                                                      ArrayList<ChessMove> validMoves, ChessGame.TeamColor teamColor, int[] moves,
+                                                      int checkRow, int checkCol, int row, int startingRow, int checkPromote, int promoteRow) {
         if (checkRow > 0 && checkRow < 9 && checkCol > 0 && checkCol < 9) {
             var checkPiece = board.getPiece(new ChessPosition(checkRow, checkCol));
             if (checkPiece == null && moves[1] == 0 && row == startingRow) {
