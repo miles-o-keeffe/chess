@@ -29,6 +29,8 @@ class ServiceTest {
 
     @Test
     void clearTest() throws ResponseException, DataAccessException {
+
+        // Adds to all the DATA_ACCESS fields so that they can be cleared
         for (int i = 0; i < 10; i++) {
             RegisterRequest testRegister = new RegisterRequest(testUsername + ((char) i),
                     testPassword + ((char) i), testEmail + ((char) i));
@@ -58,12 +60,14 @@ class ServiceTest {
 
     @Test
     void negativeRegister() throws ResponseException, DataAccessException {
+        // Duplicate Username
         SERVICE.register(testRegister);
         ResponseException responseException = Assertions.assertThrows(ResponseException.class, () -> {
             SERVICE.register(testRegister);
         });
         Assertions.assertEquals(responseException.statusCode(), 403);
 
+        // Null requests
         RegisterRequest testRegNull = new RegisterRequest(null, null, null);
         responseException = Assertions.assertThrows(ResponseException.class, () -> {
             SERVICE.register(testRegNull);
@@ -196,17 +200,20 @@ class ServiceTest {
         Assertions.assertEquals(responseException.statusCode(), 401);
         Assertions.assertEquals(responseException.getMessage(), "Error: unauthorized");
 
+        // Bad gameID
         responseException = Assertions.assertThrows(ResponseException.class, () -> {
             SERVICE.joinGame(new JoinGameRequest("WHITE", 100000), registerResult.authToken());
         });
         Assertions.assertEquals(responseException.statusCode(), 500);
 
+        // Color not White or Black
         responseException = Assertions.assertThrows(ResponseException.class, () -> {
             SERVICE.joinGame(new JoinGameRequest("CrazyColor", createGameResult.gameID()), registerResult.authToken());
         });
         Assertions.assertEquals(responseException.statusCode(), 400);
         Assertions.assertEquals(responseException.getMessage(), "Error: bad request");
 
+        // Game spot is already taken
         SERVICE.joinGame(new JoinGameRequest("WHITE", createGameResult.gameID()), registerResult.authToken());
         responseException = Assertions.assertThrows(ResponseException.class, () -> {
             SERVICE.joinGame(new JoinGameRequest("WHITE", createGameResult.gameID()), registerResult.authToken());
