@@ -97,6 +97,16 @@ public class MemoryDataAccess implements DataAccess {
         return null;
     }
 
+    // For testing
+    public AuthData getAuthByUsername(String userName) throws DataAccessException {
+        for (AuthData authData : authentications) {
+            if (Objects.equals(authData.username(), userName)) {
+                return authData;
+            }
+        }
+        return null;
+    }
+
     @Override
     public void deleteAuth(AuthData authData) throws DataAccessException {
         authentications.remove(authData);
