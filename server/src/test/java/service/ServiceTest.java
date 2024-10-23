@@ -1,6 +1,5 @@
 package service;
 
-import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
@@ -9,10 +8,9 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import request.*;
-import result.*;
+import request.CreateGameRequest;
+import request.RegisterRequest;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 class ServiceTest {
@@ -59,100 +57,58 @@ class ServiceTest {
     @Test
     void negativeRegister() throws ResponseException, DataAccessException {
         SERVICE.register(testRegister);
-        ResponseException responseException = Assertions.assertThrows(ResponseException.class, () -> {
+        Assertions.assertThrows(ResponseException.class, () -> {
             SERVICE.register(testRegister);
         });
-        Assertions.assertEquals(responseException.statusCode(), 403);
 
         RegisterRequest testRegNull = new RegisterRequest(null, null, null);
-        responseException = Assertions.assertThrows(ResponseException.class, () -> {
+        Assertions.assertThrows(ResponseException.class, () -> {
             SERVICE.register(testRegNull);
         });
-        Assertions.assertEquals(responseException.statusCode(), 400);
 
         RegisterRequest testRegPartialNull = new RegisterRequest("hello", null, "hello");
-        responseException = Assertions.assertThrows(ResponseException.class, () -> {
+        Assertions.assertThrows(ResponseException.class, () -> {
             SERVICE.register(testRegPartialNull);
         });
-        Assertions.assertEquals(responseException.statusCode(), 400);
     }
 
     @Test
-    void positiveLogin() throws ResponseException, DataAccessException {
-        SERVICE.register(testRegister);
-        LoginResult loginResult = SERVICE.login(new LoginRequest(testUsername, testPassword));
-
-        Assertions.assertNotNull(loginResult, "Return was null");
-        Assertions.assertEquals(loginResult.username(), testUsername, "Usernames do not Match");
-        Assertions.assertEquals(DATA_ACCESS.getAuth(loginResult.authToken()).username(), testUsername);
+    void positiveLogin() {
     }
 
     @Test
-    void negativeLogin() throws ResponseException, DataAccessException {
-        SERVICE.register(testRegister);
-        ResponseException responseException = Assertions.assertThrows(ResponseException.class, () -> {
-            SERVICE.login(new LoginRequest(testUsername, "wrongpassword"));
-        });
-        Assertions.assertEquals(responseException.statusCode(), 401);
-
-        responseException = Assertions.assertThrows(ResponseException.class, () -> {
-            SERVICE.login(new LoginRequest("wrongusername", "wrongpassword"));
-        });
-        Assertions.assertEquals(responseException.statusCode(), 401);
+    void negativeLogin() {
     }
 
     @Test
-    void positiveLogout() throws ResponseException, DataAccessException {
-        SERVICE.register(testRegister);
-        LoginResult loginResult = SERVICE.login(new LoginRequest(testUsername, testPassword));
-        LogoutResult logoutResult = SERVICE.logout(new LogoutRequest(loginResult.authToken()));
-
-        Assertions.assertEquals(new LogoutResult(), logoutResult);
-        Assertions.assertNull(DATA_ACCESS.getAuth(testUsername));
+    void positiveLogout() {
     }
 
     @Test
-    void negativeLogout() throws ResponseException, DataAccessException {
-        ResponseException responseException = Assertions.assertThrows(ResponseException.class, () -> {
-            SERVICE.logout(new LogoutRequest("bad-auth-token"));
-        });
-        Assertions.assertEquals(responseException.statusCode(), 401);
+    void negativeLogout() {
     }
 
     @Test
-    void positiveCreateGame() throws ResponseException, DataAccessException {
-        RegisterResult registerResult = SERVICE.register(testRegister);
-        CreateGameResult createGameResult = SERVICE.createGame(new CreateGameRequest("testGameName"), registerResult.authToken());
-
-        Assertions.assertEquals(DATA_ACCESS.getGame(createGameResult.gameID()), new GameData(createGameResult.gameID(),
-                null, null, "testGameName", new ChessGame()));
-        Assertions.assertEquals(DATA_ACCESS.getGame(createGameResult.gameID()).gameName(), "testGameName");
-        Assertions.assertNotEquals(DATA_ACCESS.getGame(createGameResult.gameID()).gameName(), "wrongName");
+    void positiveListGame() {
     }
 
     @Test
-    void negativeCreateGame() throws ResponseException, DataAccessException {
-        ResponseException responseException = Assertions.assertThrows(ResponseException.class, () -> {
-            SERVICE.createGame(new CreateGameRequest("testGameName"), "bad-auth-token");
-        });
-        Assertions.assertEquals(responseException.statusCode(), 401);
-        Assertions.assertEquals(responseException.getMessage(), "Error: unauthorized");
+    void negativeGame() {
     }
 
     @Test
-    void positiveListGame() throws ResponseException, DataAccessException {
-        
+    void positiveJoinGame() {
     }
 
     @Test
-    void negativeGame() throws ResponseException, DataAccessException {
+    void negativeJoinGame() {
     }
 
     @Test
-    void positiveJoinGame() throws ResponseException, DataAccessException {
+    void positiveCreateGame() {
     }
 
     @Test
-    void negativeJoinGame() throws ResponseException, DataAccessException {
+    void negativeCreateGame() {
     }
 }

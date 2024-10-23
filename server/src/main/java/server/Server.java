@@ -51,6 +51,11 @@ public class Server {
 
     private Object createUser(Request req, Response res) throws ResponseException, DataAccessException {
         RegisterRequest newUser = new Gson().fromJson(req.body(), RegisterRequest.class);
+        if (newUser.email() == null || newUser.username() == null || newUser.password() == null) {
+            return responseExceptionHandler(new ResponseException(400, "Error: bad request"), req, res);
+        } else if (newUser.email().isBlank() || newUser.username().isBlank() || newUser.password().isBlank()) {
+            return responseExceptionHandler(new ResponseException(400, "Error: bad request"), req, res);
+        }
         RegisterResult newAuthData = service.register(newUser);
         return new Gson().toJson(newAuthData);
     }

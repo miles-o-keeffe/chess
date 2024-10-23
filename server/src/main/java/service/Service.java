@@ -22,11 +22,6 @@ public class Service {
 
     public RegisterResult register(RegisterRequest request) throws ResponseException, DataAccessException {
         UserData newUser = new UserData(request.username(), request.password(), request.email());
-        if (newUser.email() == null || newUser.username() == null || newUser.password() == null) {
-            throw new ResponseException(400, "Error: bad request");
-        } else if (newUser.email().isBlank() || newUser.username().isBlank() || newUser.password().isBlank()) {
-            throw new ResponseException(400, "Error: bad request");
-        }
         var userCreated = dataAccess.createUser(newUser);
         if (userCreated == null) {
             throw new ResponseException(403, "Error: already taken");
