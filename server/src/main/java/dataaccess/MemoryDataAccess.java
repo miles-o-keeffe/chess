@@ -19,6 +19,10 @@ public class MemoryDataAccess implements DataAccess {
         authentications.clear();
     }
 
+    public boolean isEmpty() {
+        return users.isEmpty() && games.isEmpty() && authentications.isEmpty();
+    }
+
     @Override
     public UserData createUser(UserData newUser) throws DataAccessException {
         for (UserData userData : users) {

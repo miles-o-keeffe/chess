@@ -9,6 +9,8 @@ import java.util.Collection;
 public interface DataAccess {
     void clear() throws DataAccessException;
 
+    boolean isEmpty(); // For testing
+
     UserData createUser(UserData newUser) throws DataAccessException;
 
     UserData getUser(String userName) throws DataAccessException;
