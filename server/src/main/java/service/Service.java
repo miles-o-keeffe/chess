@@ -2,7 +2,6 @@ package service;
 
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
-import dataaccess.MemoryDataAccess;
 import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
@@ -75,6 +74,10 @@ public class Service {
     }
 
     public CreateGameResult createGame(CreateGameRequest createGameRequest, String authToken) throws DataAccessException, ResponseException {
+        if (createGameRequest.gameName() == null) {
+            throw new ResponseException(400, "Error: bad request");
+        }
+
         authenticate(authToken);
 
         int gameID = dataAccess.createGame(createGameRequest.gameName());
