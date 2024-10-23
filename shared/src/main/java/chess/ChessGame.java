@@ -123,23 +123,28 @@ public class ChessGame {
         }
 
         for (int i = 1; i < 9; i++) {
-            for (int j = 1; j < 9; j++) {
-                ChessPosition currentPos = new ChessPosition(i, j);
-                ChessPiece currentPiece = board.getPiece(currentPos);
-                if (currentPiece == null) {
-                    continue;
-                }
-                ChessGame.TeamColor currentColor = currentPiece.getTeamColor();
-                if (currentColor != teamColor) {
-                    for (ChessMove move : currentPiece.pieceMoves(this.board, currentPos)) {
-                        if (move.getEndPosition().equals(kingPos)) {
-                            return true;
-                        }
+            if (inCheckLogic(teamColor, i, kingPos)) return true;
+        }
+
+        return false;
+    }
+
+    private boolean inCheckLogic(TeamColor teamColor, int i, ChessPosition kingPos) {
+        for (int j = 1; j < 9; j++) {
+            ChessPosition currentPos = new ChessPosition(i, j);
+            ChessPiece currentPiece = board.getPiece(currentPos);
+            if (currentPiece == null) {
+                continue;
+            }
+            TeamColor currentColor = currentPiece.getTeamColor();
+            if (currentColor != teamColor) {
+                for (ChessMove move : currentPiece.pieceMoves(this.board, currentPos)) {
+                    if (move.getEndPosition().equals(kingPos)) {
+                        return true;
                     }
                 }
             }
         }
-
         return false;
     }
 

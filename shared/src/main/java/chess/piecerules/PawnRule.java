@@ -62,19 +62,20 @@ public class PawnRule {
 
     private static ArrayList<ChessMove> pawnMoveLogic(ChessBoard board, ChessPosition myPosition, ArrayList<ChessMove> validMoves, ChessGame.TeamColor teamColor, int[] moves, int checkRow, int checkCol, int row, int startingRow, int checkPromote, int promoteRow) {
         if (checkRow > 0 && checkRow < 9 && checkCol > 0 && checkCol < 9) {
-            if (board.getPiece(new ChessPosition(checkRow, checkCol)) == null && moves[1] == 0 && row == startingRow) {
+            var checkPiece = board.getPiece(new ChessPosition(checkRow, checkCol));
+            if (checkPiece == null && moves[1] == 0 && row == startingRow) {
                 validMoves.add(new ChessMove(myPosition, new ChessPosition(checkRow, checkCol), null));
                 if (board.getPiece(new ChessPosition(checkRow + checkPromote, checkCol)) == null) {
                     validMoves.add(new ChessMove(myPosition, new ChessPosition(checkRow + checkPromote, checkCol), null));
                 }
-            } else if (board.getPiece(new ChessPosition(checkRow, checkCol)) == null && moves[1] == 0) {
+            } else if (checkPiece == null && moves[1] == 0) {
                 if (checkRow == promoteRow) {
                     validMoves = addPromotionMoves(myPosition, new ChessPosition(checkRow, checkCol), validMoves);
                 } else {
                     validMoves.add(new ChessMove(myPosition, new ChessPosition(checkRow, checkCol), null));
                 }
-            } else if (board.getPiece(new ChessPosition(checkRow, checkCol)) != null) {
-                if (board.getPiece(new ChessPosition(checkRow, checkCol)).getTeamColor() != teamColor && moves[1] != 0) {
+            } else if (checkPiece != null) {
+                if (checkPiece.getTeamColor() != teamColor && moves[1] != 0) {
                     if (checkRow == promoteRow) {
                         validMoves = addPromotionMoves(myPosition, new ChessPosition(checkRow, checkCol), validMoves);
                     } else {

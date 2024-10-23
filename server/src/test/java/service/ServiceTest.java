@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import request.RegisterRequest;
 
 class ServiceTest {
-    private final DataAccess DATAACCESS = new MemoryDataAccess();
-    private final Service SERVICE = new Service(DATAACCESS);
+    private static final DataAccess DATA_ACCESS = new MemoryDataAccess();
+    private static final Service SERVICE = new Service(DATA_ACCESS);
 
     @BeforeEach
     void clear() throws ResponseException {
