@@ -11,11 +11,15 @@ import service.Service;
 import spark.*;
 
 public class Server {
-    private final DataAccess dataAccess = new MemoryDataAccess();
+    private DataAccess dataAccess;
     private final Service service = new Service(dataAccess);
 
     public Server() {
+        this.dataAccess = new MemoryDataAccess();
+    }
 
+    public Server(DataAccess dataAccess) {
+        this.dataAccess = dataAccess;
     }
 
     public int run(int desiredPort) {
