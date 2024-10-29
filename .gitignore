@@ -2,3 +2,5 @@ server/**/db.properties
 
 /shelf/
 /workspace.xml
+
+.DS_Store
