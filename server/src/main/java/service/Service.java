@@ -2,13 +2,16 @@ package service;
 
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
+import dataaccess.MySqlDataAccess;
 import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import request.*;
 import result.*;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -21,7 +24,7 @@ public class Service {
 
     public RegisterResult register(RegisterRequest request) throws ResponseException, DataAccessException {
         UserData newUser = new UserData(request.username(), request.password(), request.email());
-        
+
         if (newUser.email() == null || newUser.username() == null || newUser.password() == null) {
             throw new ResponseException(400, "Error: bad request");
         } else if (newUser.email().isBlank() || newUser.username().isBlank() || newUser.password().isBlank()) {
@@ -42,8 +45,15 @@ public class Service {
             throw new ResponseException(401, "Error: unauthorized");
         }
 
-        if (!Objects.equals(userData.password(), loginRequest.password())) {
-            throw new ResponseException(401, "Error: unauthorized");
+        // Compares hashed password if we are using MySQL
+        if (dataAccess instanceof MySqlDataAccess) {
+            if (!BCrypt.checkpw(loginRequest.password(), userData.password())) {
+                throw new ResponseException(401, "Error: unauthorized");
+            }
+        } else {
+            if (!Objects.equals(userData.password(), loginRequest.password())) {
+                throw new ResponseException(401, "Error: unauthorized");
+            }
         }
 
         AuthData newAuthData = dataAccess.createAuth(loginRequest.username());
