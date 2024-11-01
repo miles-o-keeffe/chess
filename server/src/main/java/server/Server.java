@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
+import dataaccess.MySqlDataAccess;
 import exception.ResponseException;
 import request.*;
 import result.*;
@@ -15,7 +16,11 @@ public class Server {
     private final Service service;
 
     public Server() {
-        this.dataAccess = new MemoryDataAccess();
+        try {
+            this.dataAccess = new MySqlDataAccess();
+        } catch (DataAccessException | ResponseException e) {
+            throw new RuntimeException(e);
+        }
         this.service = new Service(this.dataAccess);
     }
 

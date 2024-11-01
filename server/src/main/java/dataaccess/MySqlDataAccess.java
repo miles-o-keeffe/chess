@@ -38,8 +38,24 @@ public class MySqlDataAccess implements DataAccess {
     }
 
     @Override
-    public boolean isEmpty() {
-        return false;
+    public boolean isEmpty() throws DataAccessException {
+        String[] tables = {"users", "games", "authentications"};
+        for (String table : tables) {
+            try (var conn = DatabaseManager.getConnection()) {
+                var statement = "SELECT * FROM " + table;
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    try (var rs = preparedStatement.executeQuery()) {
+                        if (rs.next()) {
+                            return false;
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                throw new DataAccessException(e.getMessage());
+            }
+        }
+
+        return true;
     }
 
     private String hashPassword(String password) {

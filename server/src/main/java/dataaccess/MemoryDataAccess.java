@@ -19,7 +19,7 @@ public class MemoryDataAccess implements DataAccess {
         authentications.clear();
     }
 
-    public boolean isEmpty() {
+    public boolean isEmpty() throws DataAccessException {
         return users.isEmpty() && games.isEmpty() && authentications.isEmpty();
     }
 

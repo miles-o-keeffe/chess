@@ -5,17 +5,19 @@ import dataaccess.MySqlDataAccess;
 import server.Server;
 
 import java.util.Objects;
-    
+
 public class Main {
     public static void main(String[] args) {
 
         try {
             var port = 8080;
 
-            DataAccess dataAccess = new MemoryDataAccess();
-            if (args.length >= 1 && Objects.equals(args[0], "sql")) {
-                dataAccess = new MySqlDataAccess();
+            DataAccess dataAccess = new MySqlDataAccess();
+            if (args.length >= 1 && Objects.equals(args[0], "mem")) {
+                dataAccess = new MemoryDataAccess();
             }
+
+            // DataAccess dataAccess = new MySqlDataAccess();
 
             Server server = new Server(dataAccess);
             server.run(port);
