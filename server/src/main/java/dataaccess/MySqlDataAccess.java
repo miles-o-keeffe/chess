@@ -45,7 +45,9 @@ public class MySqlDataAccess implements DataAccess {
         for (String table : tables) {
             try (var conn = DatabaseManager.getConnection()) {
                 var statement = "SELECT * FROM " + table;
-                if (executeIsEmptyStatement(conn, statement)) return false;
+                if (executeIsEmptyStatement(conn, statement)) {
+                    return false;
+                }
             } catch (SQLException e) {
                 throw new DataAccessException(e.getMessage());
             }
