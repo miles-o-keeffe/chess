@@ -147,12 +147,46 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public ArrayList<GameData> listGame() throws DataAccessException {
-        return null;
+        ArrayList<GameData> listOfGames = new ArrayList<>();
+
+        var statement = "SELECT * FROM games;";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+
+                try (var rs = preparedStatement.executeQuery()) {
+                    while (rs.next()) {
+                        int gameID = rs.getInt("id");
+                        String whiteUsername = rs.getString("white_username");
+                        String blackUsername = rs.getString("black_username");
+                        String gameName = rs.getString("game_name");
+                        ChessGame chessGame = new Gson().fromJson(rs.getString("chess_game"), ChessGame.class);
+
+                        listOfGames.add(new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame));
+                    }
+                }
+                return listOfGames;
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
     public void updateGame(GameData gameData) throws DataAccessException {
+        var statement = "UPDATE games SET white_username=?,black_username=?,game_name=?,chess_game=? WHERE id = ?";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, gameData.whiteUsername());
+                preparedStatement.setString(2, gameData.blackUsername());
+                preparedStatement.setString(3, gameData.gameName());
+                preparedStatement.setString(4, new Gson().toJson(gameData.game()));
+                preparedStatement.setInt(5, gameData.gameID());
 
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
