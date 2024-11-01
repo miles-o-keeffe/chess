@@ -17,8 +17,6 @@ public class Main {
                 dataAccess = new MemoryDataAccess();
             }
 
-            // DataAccess dataAccess = new MySqlDataAccess();
-
             Server server = new Server(dataAccess);
             server.run(port);
             System.out.printf("Server started on port %d%n", port);

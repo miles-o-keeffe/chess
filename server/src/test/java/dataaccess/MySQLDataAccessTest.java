@@ -3,19 +3,40 @@ package dataaccess;
 import chess.ChessGame;
 import exception.ResponseException;
 import model.GameData;
+import model.UserData;
 import org.junit.jupiter.api.*;
+import request.RegisterRequest;
 
 public class MySQLDataAccessTest {
     private static DataAccess dataAccess;
+    private final String testUsername = "test_username";
+    private final String testPassword = "test_password";
+    private final String testEmail = "test_email";
 
     @BeforeAll
     static void createDatabase() throws ResponseException, DataAccessException {
         dataAccess = new MySqlDataAccess();
     }
 
-    @Test
-    void clear() {
+    @BeforeEach
+    void clear() throws DataAccessException {
+        dataAccess.clear();
+    }
 
+    @Test
+    void clearTest() throws DataAccessException {
+        // Adds to all the DATA_ACCESS fields so that they can be cleared
+        for (int i = 1; i < 11; i++) {
+            UserData testUserData = new UserData(testUsername + (i),
+                    testPassword + (i), testEmail + (i));
+            dataAccess.createUser(testUserData);
+            String testGameName = "test_game";
+            dataAccess.createGame(testGameName + ((char) i));
+        }
+
+        dataAccess.clear();
+
+        Assertions.assertTrue(dataAccess.isEmpty());
     }
 
     @Test
