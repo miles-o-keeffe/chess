@@ -9,6 +9,8 @@ import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.xml.crypto.Data;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -43,19 +45,24 @@ public class MySqlDataAccess implements DataAccess {
         for (String table : tables) {
             try (var conn = DatabaseManager.getConnection()) {
                 var statement = "SELECT * FROM " + table;
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    try (var rs = preparedStatement.executeQuery()) {
-                        if (rs.next()) {
-                            return false;
-                        }
-                    }
-                }
+                if (executeIsEmptyStatement(conn, statement)) return false;
             } catch (SQLException e) {
                 throw new DataAccessException(e.getMessage());
             }
         }
 
         return true;
+    }
+
+    private static boolean executeIsEmptyStatement(Connection conn, String statement) throws SQLException {
+        try (var preparedStatement = conn.prepareStatement(statement)) {
+            try (var rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private String hashPassword(String password) {
@@ -100,10 +107,10 @@ public class MySqlDataAccess implements DataAccess {
                         return null;
                     } else {
                         var username = rs.getString("username");
-                        var hashed_pass = rs.getString("password");
+                        var hashedPass = rs.getString("password");
                         var email = rs.getString("email");
 
-                        return new UserData(username, hashed_pass, email);
+                        return new UserData(username, hashedPass, email);
                     }
                 }
             }
@@ -230,16 +237,7 @@ public class MySqlDataAccess implements DataAccess {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, authToken);
 
-                try (var rs = preparedStatement.executeQuery()) {
-                    if (!rs.next()) {
-                        return null;
-                    } else {
-                        var auth_token = rs.getString("auth_token");
-                        var username = rs.getString("username");
-
-                        return new AuthData(auth_token, username);
-                    }
-                }
+                return executeGetAuthData(preparedStatement);
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
@@ -253,19 +251,23 @@ public class MySqlDataAccess implements DataAccess {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, userName);
 
-                try (var rs = preparedStatement.executeQuery()) {
-                    if (!rs.next()) {
-                        return null;
-                    } else {
-                        var auth_token = rs.getString("auth_token");
-                        var username = rs.getString("username");
-
-                        return new AuthData(auth_token, username);
-                    }
-                }
+                return executeGetAuthData(preparedStatement);
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
+        }
+    }
+
+    private static AuthData executeGetAuthData(PreparedStatement preparedStatement) throws SQLException {
+        try (var rs = preparedStatement.executeQuery()) {
+            if (!rs.next()) {
+                return null;
+            } else {
+                var authToken = rs.getString("auth_token");
+                var username = rs.getString("username");
+
+                return new AuthData(authToken, username);
+            }
         }
     }
 
