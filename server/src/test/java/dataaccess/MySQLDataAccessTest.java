@@ -231,6 +231,7 @@ public class MySQLDataAccessTest {
     void negativeDeleteAuth() throws DataAccessException {
         // My deleteAuth doesn't really have a negative case
         dataAccess.deleteAuth(new AuthData(null, null));
+        Assertions.assertNull(dataAccess.getAuth(null));
     }
 
 }
