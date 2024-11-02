@@ -1,4 +1,5 @@
 server/**/db.properties
+out/production/server/db.properties
 
 /shelf/
 /workspace.xml
