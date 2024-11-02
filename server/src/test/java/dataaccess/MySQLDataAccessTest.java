@@ -1,14 +1,18 @@
 package dataaccess;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
+import chess.InvalidMoveException;
 import exception.ResponseException;
+import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import org.mindrot.jbcrypt.BCrypt;
 import request.CreateGameRequest;
-import request.JoinGameRequest;
-import request.RegisterRequest;
+
+import java.util.ArrayList;
 
 public class MySQLDataAccessTest {
     private static DataAccess dataAccess;
@@ -62,6 +66,11 @@ public class MySQLDataAccessTest {
         Assertions.assertThrows(DataAccessException.class, () -> {
             dataAccess.createUser(testUserData);
         });
+
+        UserData testUserData2 = new UserData(testUsername,
+                testPassword, testEmail);
+        dataAccess.createUser(testUserData2);
+        Assertions.assertNull(dataAccess.createUser(testUserData2));
     }
 
     @Test
@@ -89,8 +98,10 @@ public class MySQLDataAccessTest {
     }
 
     @Test
-    void negativeCreateGame() {
-
+    void negativeCreateGame() throws DataAccessException {
+        Assertions.assertThrows(DataAccessException.class, () -> {
+            dataAccess.createGame(null);
+        });
     }
 
     @Test
@@ -102,68 +113,124 @@ public class MySQLDataAccessTest {
     }
 
     @Test
-    void negativeGetGame() {
-
+    void negativeGetGame() throws DataAccessException {
+        // The way my getGame is written there isn't really a negative case
+        Assertions.assertNull(dataAccess.getGame(-1));
     }
 
     @Test
-    void positiveListGame() {
+    void positiveListGame() throws DataAccessException {
+        Assertions.assertEquals(new ArrayList<GameData>(), dataAccess.listGame());
 
+        String[] gameNameList = {"testGameName1", "testGameName2", "testGameName3"};
+
+        ArrayList<GameData> gameList = new ArrayList<>();
+        for (int i = 1; i < 4; i++) {
+            gameList.add(new GameData(i, null, null,
+                    gameNameList[i - 1], new ChessGame()));
+            dataAccess.createGame(gameNameList[i - 1]);
+        }
+
+        ArrayList<GameData> returnedList = dataAccess.listGame();
+
+        Assertions.assertEquals(gameList, returnedList);
     }
 
     @Test
-    void negativeListGame() {
-
+    void negativeListGame() throws DataAccessException {
+        // The way my list games is written, there really isn't a negative case
+        Assertions.assertEquals(new ArrayList<GameData>(), dataAccess.listGame());
     }
 
     @Test
-    void positiveUpdateGame() {
+    void positiveUpdateGame() throws DataAccessException, InvalidMoveException {
+        int gameID = dataAccess.createGame("testGameName1");
 
+        // Tests adding users
+        GameData gameData = new GameData(gameID, testUsername, testUsername + "2",
+                "testGameName1", new ChessGame());
+
+        dataAccess.updateGame(gameData);
+        Assertions.assertEquals(gameData, dataAccess.getGame(gameID));
+
+        // Tests a chess move
+        ChessGame chessGame = new ChessGame();
+        chessGame.makeMove(new ChessMove(new ChessPosition(2, 1), new ChessPosition(3, 1), null));
+        GameData gameData2 = new GameData(gameID, testUsername + "3", testUsername + "2",
+                "testGameName1", chessGame);
+
+        dataAccess.updateGame(gameData2);
+        Assertions.assertEquals(gameData2, dataAccess.getGame(gameID));
     }
 
     @Test
-    void negativeUpdateGame() {
+    void negativeUpdateGame() throws DataAccessException {
+        int gameID = dataAccess.createGame("testGameName1");
 
+        GameData nullGameData = new GameData(gameID, null, null, null, null);
+
+        // Tries to add null data
+        Assertions.assertThrows(DataAccessException.class, () -> {
+            dataAccess.updateGame(nullGameData);
+        });
     }
 
     @Test
-    void positiveCreateAuth() {
+    void positiveCreateAuth() throws DataAccessException {
+        AuthData returnedAuthData = dataAccess.createAuth(testUsername);
 
+        Assertions.assertEquals(returnedAuthData, dataAccess.getAuth(returnedAuthData.authToken()));
+        Assertions.assertEquals(returnedAuthData, dataAccess.getAuthByUsername(returnedAuthData.username()));
     }
 
     @Test
-    void negativeCreateAuth() {
-
+    void negativeCreateAuth() throws DataAccessException {
+        Assertions.assertThrows(DataAccessException.class, () -> {
+            AuthData returnedAuthData = dataAccess.createAuth(null);
+        });
     }
 
     @Test
-    void positiveGetAuth() {
+    void positiveGetAuth() throws DataAccessException {
+        AuthData returnedAuthData = dataAccess.createAuth(testUsername);
 
+        Assertions.assertEquals(returnedAuthData, dataAccess.getAuth(returnedAuthData.authToken()));
     }
 
     @Test
-    void negativeGetAuth() {
-
+    void negativeGetAuth() throws DataAccessException {
+        // My getAuth doesn't really have a negative case
+        Assertions.assertNull(dataAccess.getAuth(null));
+        Assertions.assertNull(dataAccess.getAuth("random_auth"));
     }
 
     @Test
-    void positiveGetAuthByUsername() {
+    void positiveGetAuthByUsername() throws DataAccessException {
+        AuthData returnedAuthData = dataAccess.createAuth(testUsername);
 
+        Assertions.assertEquals(returnedAuthData, dataAccess.getAuthByUsername(returnedAuthData.username()));
     }
 
     @Test
-    void negativeGetAuthByUsername() {
-
+    void negativeGetAuthByUsername() throws DataAccessException {
+        // My getAuthByUsername doesn't really have a negative case
+        Assertions.assertNull(dataAccess.getAuth(null));
+        Assertions.assertNull(dataAccess.getAuth("random_username"));
     }
 
     @Test
-    void positiveDeleteAuth() {
+    void positiveDeleteAuth() throws DataAccessException {
+        AuthData returnedAuthData = dataAccess.createAuth(testUsername);
 
+        dataAccess.deleteAuth(returnedAuthData);
+
+        Assertions.assertNull(dataAccess.getAuth(returnedAuthData.authToken()));
     }
 
     @Test
-    void negativeDeleteAuth() {
-
+    void negativeDeleteAuth() throws DataAccessException {
+        // My deleteAuth doesn't really have a negative case
+        dataAccess.deleteAuth(new AuthData(null, null));
     }
 
 }
