@@ -7,11 +7,16 @@ import result.LoginResult;
 import result.RegisterResult;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 public class ClientPreLogin {
     private final String serverURL;
     private final ServerFacade serverFacade;
+    private State state = State.SIGNEDOUT;
+
+    public enum State {
+        SIGNEDOUT,
+        SIGNEDIN
+    }
 
     public ClientPreLogin(String serverURL) {
         this.serverURL = serverURL;
@@ -44,6 +49,7 @@ public class ClientPreLogin {
     public String login(String... params) throws ResponseException {
         if (params.length >= 2) {
             LoginResult loginResult = serverFacade.login(new LoginRequest(params[0], params[1]));
+            this.setState(State.SIGNEDIN);
             return String.format("You signed in as %s.", loginResult.username());
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
@@ -52,8 +58,22 @@ public class ClientPreLogin {
     public String register(String... params) throws ResponseException {
         if (params.length >= 2) {
             RegisterResult registerResult = serverFacade.register(new RegisterRequest(params[0], params[1], params[2]));
+            this.setState(State.SIGNEDIN);
             return String.format("You registered and signed in as %s.", registerResult.username());
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public String getServerURL() {
+        return serverURL;
+    }
+
 }

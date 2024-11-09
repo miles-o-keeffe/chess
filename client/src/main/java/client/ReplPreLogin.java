@@ -1,5 +1,7 @@
 package client;
 
+import result.LoginResult;
+
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
@@ -27,6 +29,10 @@ public class ReplPreLogin {
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
+            }
+
+            if (client.getState() == ClientPreLogin.State.SIGNEDIN) {
+                new ReplLoggedIn(client.getServerURL()).run();
             }
         }
         System.out.println();
