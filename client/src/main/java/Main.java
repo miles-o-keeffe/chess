@@ -1,4 +1,5 @@
 import chess.*;
+import client.ReplPreLogin;
 
 public class Main {
     public static void main(String[] args) {
@@ -8,6 +9,6 @@ public class Main {
             serverUrl = args[0];
         }
 
-        // new Repl(serverUrl).run();
+        new ReplPreLogin(serverUrl).run();
     }
 }
