@@ -8,12 +8,11 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
 public class ReplLoggedIn {
     private final ClientLoggedIn client;
 
-    public ReplLoggedIn(String serverUrl) {
-        this.client = new ClientLoggedIn(serverUrl);
+    public ReplLoggedIn(String serverUrl, String currentAuthToken) {
+        this.client = new ClientLoggedIn(serverUrl, currentAuthToken);
     }
 
     public void run() {
-        this.printPrompt();
 
         Scanner scanner = new Scanner(System.in);
         var result = "";

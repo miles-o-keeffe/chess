@@ -12,6 +12,7 @@ public class ClientPreLogin {
     private final String serverURL;
     private final ServerFacade serverFacade;
     private State state = State.SIGNEDOUT;
+    private String currentAuthToken;
 
     public enum State {
         SIGNEDOUT,
@@ -50,15 +51,17 @@ public class ClientPreLogin {
         if (params.length >= 2) {
             LoginResult loginResult = serverFacade.login(new LoginRequest(params[0], params[1]));
             this.setState(State.SIGNEDIN);
+            this.currentAuthToken = loginResult.authToken();
             return String.format("You signed in as %s.", loginResult.username());
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
 
     public String register(String... params) throws ResponseException {
-        if (params.length >= 2) {
+        if (params.length >= 3) {
             RegisterResult registerResult = serverFacade.register(new RegisterRequest(params[0], params[1], params[2]));
             this.setState(State.SIGNEDIN);
+            this.currentAuthToken = registerResult.authToken();
             return String.format("You registered and signed in as %s.", registerResult.username());
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
@@ -74,6 +77,11 @@ public class ClientPreLogin {
 
     public String getServerURL() {
         return serverURL;
+    }
+
+
+    public String getCurrentAuthToken() {
+        return currentAuthToken;
     }
 
 }

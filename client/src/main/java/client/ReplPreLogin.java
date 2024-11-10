@@ -32,7 +32,7 @@ public class ReplPreLogin {
             }
 
             if (client.getState() == ClientPreLogin.State.SIGNEDIN) {
-                new ReplLoggedIn(client.getServerURL()).run();
+                new ReplLoggedIn(client.getServerURL(), client.getCurrentAuthToken()).run();
             }
         }
         System.out.println();
