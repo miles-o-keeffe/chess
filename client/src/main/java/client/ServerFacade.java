@@ -49,6 +49,11 @@ public class ServerFacade {
         return this.makeRequest("PUT", path, request, JoinGameResult.class, authToken);
     }
 
+    public LogoutResult logout(LogoutRequest request) throws ResponseException {
+        var path = "/session";
+        return this.makeRequest("DELETE", path, request, LogoutResult.class, request.authToken());
+    }
+
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverURL + path)).toURL();

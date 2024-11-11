@@ -2,10 +2,7 @@ package client;
 
 import exception.ResponseException;
 import model.GameData;
-import request.CreateGameRequest;
-import request.JoinGameRequest;
-import request.ListGamesRequest;
-import request.LoginRequest;
+import request.*;
 import result.*;
 
 import java.util.ArrayList;
@@ -74,10 +71,15 @@ public class ClientLoggedIn {
     }
 
     public String observeGame(String... params) throws ResponseException {
-        return "";
+        if (params.length >= 1) {
+            JoinGameResult joinGameResult = serverFacade.joinGame(new JoinGameRequest(params[1], Integer.parseInt(params[0])), currentAuthToken);
+            return String.format("Game \"" + params[0] + "\" joined as an observer");
+        }
+        throw new ResponseException(400, "Expected: <ID>");
     }
 
-    public String logout() {
+    public String logout() throws ResponseException {
+        LogoutResult logoutResult = serverFacade.logout(new LogoutRequest(currentAuthToken));
         return "quit";
     }
 
