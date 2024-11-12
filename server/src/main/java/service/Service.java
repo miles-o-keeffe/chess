@@ -110,8 +110,8 @@ public class Service {
             throw new ResponseException(500, "Error: no such game exists");
         }
 
-        if ((Objects.equals(joinGameRequest.playerColor(), "WHITE") && gameData.whiteUsername() != null)
-                || (Objects.equals(joinGameRequest.playerColor(), "BLACK") && gameData.blackUsername() != null)) {
+        if ((Objects.equals(joinGameRequest.playerColor().toUpperCase(), "WHITE") && gameData.whiteUsername() != null)
+                || (Objects.equals(joinGameRequest.playerColor().toUpperCase(), "BLACK") && gameData.blackUsername() != null)) {
             throw new ResponseException(403, "Error: already taken");
         }
 
@@ -126,9 +126,9 @@ public class Service {
 
     private static GameData getGameData(JoinGameRequest joinGameRequest, String username, GameData gameData) throws ResponseException {
         GameData newGameData;
-        if (Objects.equals(joinGameRequest.playerColor(), "WHITE")) {
+        if (Objects.equals(joinGameRequest.playerColor().toUpperCase(), "WHITE")) {
             newGameData = new GameData(joinGameRequest.gameID(), username, gameData.blackUsername(), gameData.gameName(), gameData.game());
-        } else if (Objects.equals(joinGameRequest.playerColor(), "BLACK")) {
+        } else if (Objects.equals(joinGameRequest.playerColor().toUpperCase(), "BLACK")) {
             newGameData = new GameData(joinGameRequest.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.game());
         } else {
             throw new ResponseException(400, "Error: bad request");

@@ -28,6 +28,12 @@ public class ReplLoggedIn {
                 System.out.print(msg);
             }
         }
+
+        if (client.isGameJoined()) {
+            client.setGameJoined(false);
+            new ReplGamePlay().run();
+        }
+
         System.out.println();
     }
 

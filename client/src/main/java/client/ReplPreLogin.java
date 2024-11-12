@@ -32,6 +32,7 @@ public class ReplPreLogin {
             }
 
             if (client.getState() == ClientPreLogin.State.SIGNEDIN) {
+                client.setState(ClientPreLogin.State.SIGNEDOUT);
                 new ReplLoggedIn(client.getServerURL(), client.getCurrentAuthToken()).run();
             }
         }

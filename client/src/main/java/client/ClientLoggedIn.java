@@ -13,6 +13,7 @@ public class ClientLoggedIn {
     private final ServerFacade serverFacade;
     private String currentAuthToken;
     private ArrayList<ListGameData> recentGameList;
+    private boolean gameJoined = false;
 
     public ClientLoggedIn(String serverURL, String currentAuthToken) {
         this.serverURL = serverURL;
@@ -51,7 +52,7 @@ public class ClientLoggedIn {
         if (params.length >= 1) {
             throw new ResponseException(400, "Expected no parameters");
         }
-        ListGamesResult listGamesResult = serverFacade.listGames(new ListGamesRequest(currentAuthToken), currentAuthToken);
+        ListGamesResult listGamesResult = serverFacade.listGames(currentAuthToken);
         this.recentGameList = listGamesResult.games();
 
         for (int i = 0; i < listGamesResult.games().size(); i++) {
@@ -63,8 +64,13 @@ public class ClientLoggedIn {
     }
 
     public String joinGame(String... params) throws ResponseException {
-        if (params.length >= 1) {
-            JoinGameResult joinGameResult = serverFacade.joinGame(new JoinGameRequest(params[1], Integer.parseInt(params[0])), currentAuthToken);
+        if (recentGameList == null) {
+            return "You must call list games before joining a game";
+        }
+        if (params.length >= 2) {
+            int gameID = recentGameList.get(Integer.parseInt(params[0]) - 1).gameID();
+            JoinGameResult joinGameResult = serverFacade.joinGame(new JoinGameRequest(params[1], gameID), currentAuthToken);
+            this.setGameJoined(true);
             return String.format("Game \"" + params[0] + "\" joined");
         }
         throw new ResponseException(400, "Expected: <ID> [WHITE|BLACK]");
@@ -91,5 +97,13 @@ public class ClientLoggedIn {
                 "logout - when you are done\n" +
                 "quit - playing chess\n" +
                 "help - with possible commands";
+    }
+
+    public boolean isGameJoined() {
+        return gameJoined;
+    }
+
+    public void setGameJoined(boolean gameJoined) {
+        this.gameJoined = gameJoined;
     }
 }
