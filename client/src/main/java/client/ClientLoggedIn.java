@@ -13,7 +13,7 @@ public class ClientLoggedIn {
     private final ServerFacade serverFacade;
     private String currentAuthToken;
     private ArrayList<ListGameData> recentGameList;
-    private boolean gameJoined = false;
+    private int gameJoinedID = -1;
 
     public ClientLoggedIn(String serverURL, String currentAuthToken) {
         this.serverURL = serverURL;
@@ -68,17 +68,21 @@ public class ClientLoggedIn {
             return "You must call list games before joining a game";
         }
         if (params.length >= 2) {
-            int gameID = recentGameList.get(Integer.parseInt(params[0]) - 1).gameID();
-            JoinGameResult joinGameResult = serverFacade.joinGame(new JoinGameRequest(params[1], gameID), currentAuthToken);
-            this.setGameJoined(true);
-            return String.format("Game \"" + params[0] + "\" joined");
+            int mySQLGameID = recentGameList.get(Integer.parseInt(params[0]) - 1).gameID();
+            JoinGameResult joinGameResult = serverFacade.joinGame(new JoinGameRequest(params[1], mySQLGameID), currentAuthToken);
+            this.setGameJoinedID(mySQLGameID);
+            return String.format("Game \"" + params[0] + "\" joined%n");
         }
         throw new ResponseException(400, "Expected: <ID> [WHITE|BLACK]");
     }
 
     public String observeGame(String... params) throws ResponseException {
+        if (recentGameList == null) {
+            return "You must call list games before joining a game";
+        }
         if (params.length >= 1) {
-            JoinGameResult joinGameResult = serverFacade.joinGame(new JoinGameRequest(params[1], Integer.parseInt(params[0])), currentAuthToken);
+            int mySQLGameID = recentGameList.get(Integer.parseInt(params[0]) - 1).gameID();
+            this.setGameJoinedID(mySQLGameID);
             return String.format("Game \"" + params[0] + "\" joined as an observer");
         }
         throw new ResponseException(400, "Expected: <ID>");
@@ -99,11 +103,12 @@ public class ClientLoggedIn {
                 "help - with possible commands";
     }
 
-    public boolean isGameJoined() {
-        return gameJoined;
+    public int getGameJoinedID() {
+        return gameJoinedID;
     }
 
-    public void setGameJoined(boolean gameJoined) {
-        this.gameJoined = gameJoined;
+    public void setGameJoinedID(int gameJoinedID) {
+        this.gameJoinedID = gameJoinedID;
     }
+
 }

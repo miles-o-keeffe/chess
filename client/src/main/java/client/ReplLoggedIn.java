@@ -29,8 +29,8 @@ public class ReplLoggedIn {
             }
         }
 
-        if (client.isGameJoined()) {
-            client.setGameJoined(false);
+        if (client.getGameJoinedID() > 0) {
+            client.setGameJoinedID(0);
             new ReplGamePlay().run();
         }
 
