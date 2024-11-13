@@ -3,7 +3,10 @@ package client;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import org.junit.jupiter.api.*;
+import request.LoginRequest;
 import request.RegisterRequest;
+import result.LoginResult;
+import result.LogoutResult;
 import result.RegisterResult;
 import server.Server;
 
@@ -23,25 +26,48 @@ public class ServerFacadeTests {
         facade = new ServerFacade(port);
     }
 
+    @BeforeEach
+    public void clear() {
+//        var path = "/db";
+//        return this.makeRequest("DELETE", path, request, LogoutResult.class, request.authToken());
+    }
+
     @AfterAll
     static void stopServer() {
         server.stop();
     }
 
-
-    @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
-    }
-
     @Test
     void positiveLogin() throws Exception {
+        Random random = new Random();
+        int randomNumber = random.nextInt(10000) + 1;
+        RegisterRequest registerRequest = new RegisterRequest("player" + randomNumber, "password", "p1@email.com");
+        facade.register(registerRequest);
 
+        LoginRequest loginRequest = new LoginRequest("player" + randomNumber, "password");
+        LoginResult loginResult = facade.login(loginRequest);
+        Assertions.assertTrue(loginResult.authToken().length() > 10);
+        Assertions.assertEquals(loginResult.username(), loginRequest.username());
     }
 
     @Test
     void negativeLogin() throws Exception {
+        // Username does not exists
+        LoginRequest usernameDNELoginRequest = new LoginRequest("username_dne", "password");
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.login(usernameDNELoginRequest);
+        });
 
+        Random random = new Random();
+        int randomNumber = random.nextInt(10000) + 1;
+        RegisterRequest registerRequest = new RegisterRequest("player" + randomNumber, "password", "p1@email.com");
+        facade.register(registerRequest);
+
+        // Enters the wrong password
+        LoginRequest loginRequestWrongPass = new LoginRequest("player" + randomNumber, "wrong_password");
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.login(loginRequestWrongPass);
+        });
     }
 
     @Test
@@ -59,7 +85,7 @@ public class ServerFacadeTests {
         Random random = new Random();
         int randomNumber = random.nextInt(10000) + 1;
         RegisterRequest registerRequest = new RegisterRequest("repeat_player" + randomNumber, "password", "p1@email.com");
-        RegisterResult registerResult = facade.register(registerRequest);
+        facade.register(registerRequest);
         Assertions.assertThrows(Exception.class, () -> {
             facade.register(registerRequest);
         });
