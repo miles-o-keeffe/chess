@@ -15,7 +15,7 @@ public class ServerFacadeTests {
     private static Server server;
     static ServerFacade facade;
     private String authtoken;
-    private final String auth_username = "auth_player";
+    private final String authUsername = "auth_player";
 
     @BeforeAll
     public static void init() {
@@ -32,7 +32,7 @@ public class ServerFacadeTests {
 
     @BeforeEach
     public void generateAuthToken() throws ResponseException {
-        RegisterRequest registerRequest = new RegisterRequest(auth_username, "password", "p1@email.com");
+        RegisterRequest registerRequest = new RegisterRequest(authUsername, "password", "p1@email.com");
         RegisterResult registerResult = facade.register(registerRequest);
 
         this.authtoken = registerResult.authToken();
@@ -181,13 +181,13 @@ public class ServerFacadeTests {
         facade.joinGame(joinGameRequestWHITE, this.authtoken);
 
         ListGamesResult listGamesResultWhite = facade.listGames(this.authtoken);
-        Assertions.assertEquals(listGamesResultWhite.games().getFirst().whiteUsername(), this.auth_username);
+        Assertions.assertEquals(listGamesResultWhite.games().getFirst().whiteUsername(), this.authUsername);
 
         JoinGameRequest joinGameRequestBlack = new JoinGameRequest("BLACK", createGameResult.gameID());
         facade.joinGame(joinGameRequestBlack, this.authtoken);
 
         ListGamesResult listGamesResultBlack = facade.listGames(this.authtoken);
-        Assertions.assertEquals(listGamesResultBlack.games().getFirst().blackUsername(), this.auth_username);
+        Assertions.assertEquals(listGamesResultBlack.games().getFirst().blackUsername(), this.authUsername);
     }
 
     @Test
@@ -214,7 +214,7 @@ public class ServerFacadeTests {
 
     @Test
     void positiveLogout() throws Exception {
-        LoginRequest loginRequest = new LoginRequest(auth_username, "password");
+        LoginRequest loginRequest = new LoginRequest(authUsername, "password");
         LoginResult loginResult = facade.login(loginRequest);
 
         // Makes sure LogoutResult returns properly
