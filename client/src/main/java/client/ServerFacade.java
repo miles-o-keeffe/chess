@@ -22,7 +22,7 @@ public class ServerFacade {
     }
 
     public ServerFacade(int port) {
-        this.serverURL = "https://localhost:" + port;
+        this.serverURL = "http://localhost:" + port;
     }
 
     public LoginResult login(LoginRequest request) throws ResponseException {
@@ -54,11 +54,6 @@ public class ServerFacade {
         var path = "/session";
         return this.makeRequest("DELETE", path, request, LogoutResult.class, request.authToken());
     }
-
-//    public GameData getGameBoard(int gameID) throws ResponseException {
-//        var path = "/session";
-//        return this.makeRequest("DELETE", path, request, LogoutResult.class, request.authToken());
-//    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
