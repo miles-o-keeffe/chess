@@ -25,12 +25,12 @@ public class DrawChessBoard {
         pieceTypeMap.put(ChessPiece.PieceType.PAWN, "P");
     }
 
-    public enum boardOrientation {
+    public enum BoardOrientation {
         WHITE,
         BLACK
     }
 
-    public void drawBoard(ChessBoard chessBoard, boardOrientation orientation) {
+    public void drawBoard(ChessBoard chessBoard, BoardOrientation orientation) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         for (int r = 0; r < 10; r++) {
@@ -46,7 +46,7 @@ public class DrawChessBoard {
         }
     }
 
-    public void drawBorder(int row, int col, PrintStream out, boardOrientation orientation) {
+    public void drawBorder(int row, int col, PrintStream out, BoardOrientation orientation) {
 
         // Sets border color
         if (row == 0 || row == 9 || col == 0 || col == 9) {
@@ -66,7 +66,7 @@ public class DrawChessBoard {
         // Prints column letters
         if ((row == 0 || row == 9) && (col < 9 && col > 0)) {
             out.print(SET_TEXT_COLOR_WHITE);
-            if (orientation == boardOrientation.BLACK) {
+            if (orientation == BoardOrientation.BLACK) {
                 out.print(" " + columnLetters[(col - 1) * -1 + 7] + " ");
             } else {
                 out.print(" " + columnLetters[col - 1] + " ");
@@ -76,7 +76,7 @@ public class DrawChessBoard {
         // Prints row numbers
         if ((col == 0 || col == 9) && (row < 9 && row > 0)) {
             out.print(SET_TEXT_COLOR_WHITE);
-            if (orientation == boardOrientation.BLACK) {
+            if (orientation == BoardOrientation.BLACK) {
                 out.print(" " + row + " ");
             } else {
                 out.print(" " + ((row * -1) + 9) + " ");
@@ -84,11 +84,11 @@ public class DrawChessBoard {
         }
     }
 
-    public void drawPieces(int row, int col, PrintStream out, boardOrientation orientation, ChessBoard chessBoard) {
+    public void drawPieces(int row, int col, PrintStream out, BoardOrientation orientation, ChessBoard chessBoard) {
         if ((col < 9 && col > 0) && (row < 9 && row > 0)) {
             String pieceToPrint = "";
             ChessPiece currPiece;
-            if (orientation == boardOrientation.BLACK) {
+            if (orientation == BoardOrientation.BLACK) {
                 currPiece = chessBoard.getPiece(new ChessPosition(row, col));
             } else {
                 currPiece = chessBoard.getPiece(new ChessPosition((row * -1) + 9, (col * -1) + 9));

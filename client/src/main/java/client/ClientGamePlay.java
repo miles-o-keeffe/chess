@@ -1,16 +1,6 @@
 package client;
 
 import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
-import exception.ResponseException;
-import result.ListGameData;
-import result.ListGamesResult;
-
-import java.util.Arrays;
-
-import static ui.EscapeSequences.*;
 
 public class ClientGamePlay {
     private final String serverURL;
@@ -27,9 +17,9 @@ public class ClientGamePlay {
     }
 
     public void drawGame(ChessBoard chessBoardToDraw) {
-        chessBoardDrawer.drawBoard(chessBoardToDraw, DrawChessBoard.boardOrientation.BLACK);
+        chessBoardDrawer.drawBoard(chessBoardToDraw, DrawChessBoard.BoardOrientation.BLACK);
         chessBoardDrawer.drawBreakBlack();
-        chessBoardDrawer.drawBoard(chessBoardToDraw, DrawChessBoard.boardOrientation.WHITE);
+        chessBoardDrawer.drawBoard(chessBoardToDraw, DrawChessBoard.BoardOrientation.WHITE);
     }
 
     public String help() {
