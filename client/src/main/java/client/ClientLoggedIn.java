@@ -11,9 +11,10 @@ import java.util.Arrays;
 public class ClientLoggedIn {
     private final String serverURL;
     private final ServerFacade serverFacade;
-    private String currentAuthToken;
+    private final String currentAuthToken;
     private ArrayList<ListGameData> recentGameList;
     private int gameJoinedID = -1;
+    private boolean isObserving = false;
 
     public ClientLoggedIn(String serverURL, String currentAuthToken) {
         this.serverURL = serverURL;
@@ -31,8 +32,7 @@ public class ClientLoggedIn {
                 case "list" -> listGames(params);
                 case "join" -> joinGame(params);
                 case "observe" -> observeGame(params);
-                case "logout" -> logout();
-                case "quit" -> "quit";
+                case "logout", "quit" -> logout();
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -69,7 +69,7 @@ public class ClientLoggedIn {
         }
         if (params.length >= 2) {
             int mySQLGameID = recentGameList.get(Integer.parseInt(params[0]) - 1).gameID();
-            JoinGameResult joinGameResult = serverFacade.joinGame(new JoinGameRequest(params[1], mySQLGameID), currentAuthToken);
+            serverFacade.joinGame(new JoinGameRequest(params[1], mySQLGameID), currentAuthToken);
             this.setGameJoinedID(mySQLGameID);
             return String.format("Game \"" + params[0] + "\" joined%n");
         }
@@ -83,6 +83,7 @@ public class ClientLoggedIn {
         if (params.length >= 1) {
             int mySQLGameID = recentGameList.get(Integer.parseInt(params[0]) - 1).gameID();
             this.setGameJoinedID(mySQLGameID);
+            this.setObserving(true);
             return String.format("Game \"" + params[0] + "\" joined as an observer");
         }
         throw new ResponseException(400, "Expected: <ID>");
@@ -109,6 +110,22 @@ public class ClientLoggedIn {
 
     public void setGameJoinedID(int gameJoinedID) {
         this.gameJoinedID = gameJoinedID;
+    }
+
+    public boolean isObserving() {
+        return isObserving;
+    }
+
+    public void setObserving(boolean observing) {
+        isObserving = observing;
+    }
+
+    public String getServerURL() {
+        return serverURL;
+    }
+
+    public String getCurrentAuthToken() {
+        return currentAuthToken;
     }
 
 }

@@ -27,17 +27,18 @@ public class ReplLoggedIn {
                 var msg = e.toString();
                 System.out.print(msg);
             }
-        }
 
-        if (client.getGameJoinedID() > 0) {
-            client.setGameJoinedID(0);
-            new ReplGamePlay().run();
+            if (client.getGameJoinedID() > 0) {
+                int newGameJoinedID = client.getGameJoinedID();
+                client.setGameJoinedID(0);
+                new ReplGamePlay(client.getServerURL(), client.getCurrentAuthToken(), newGameJoinedID).run();
+            }
         }
 
         System.out.println();
     }
 
     private void printPrompt() {
-        System.out.print("\n" + "[LOGGED_IN] " + SET_TEXT_COLOR_RED + ">>> " + SET_TEXT_COLOR_GREEN);
+        System.out.print("\n" + SET_TEXT_COLOR_GREEN + "[LOGGED_IN] " + SET_TEXT_COLOR_RED + ">>> " + SET_TEXT_COLOR_GREEN);
     }
 }
