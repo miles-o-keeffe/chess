@@ -1,15 +1,17 @@
 package client;
 
 import dataaccess.DataAccessException;
+import exception.ResponseException;
 import model.AuthData;
 import org.junit.jupiter.api.*;
+import request.CreateGameRequest;
+import request.ListGamesRequest;
 import request.LoginRequest;
 import request.RegisterRequest;
-import result.LoginResult;
-import result.LogoutResult;
-import result.RegisterResult;
+import result.*;
 import server.Server;
 
+import java.util.Objects;
 import java.util.Random;
 
 
@@ -17,6 +19,7 @@ public class ServerFacadeTests {
 
     private static Server server;
     static ServerFacade facade;
+    private String authtoken;
 
     @BeforeAll
     public static void init() {
@@ -30,6 +33,16 @@ public class ServerFacadeTests {
     public void clear() {
 //        var path = "/db";
 //        return this.makeRequest("DELETE", path, request, LogoutResult.class, request.authToken());
+    }
+
+    @BeforeEach
+    public void generateAuthToken() throws ResponseException {
+        Random random = new Random();
+        int randomNumber = random.nextInt(10000) + 1;
+        RegisterRequest registerRequest = new RegisterRequest("player" + randomNumber, "password", "p1@email.com");
+        RegisterResult registerResult = facade.register(registerRequest);
+
+        this.authtoken = registerResult.authToken();
     }
 
     @AfterAll
@@ -68,6 +81,17 @@ public class ServerFacadeTests {
         Assertions.assertThrows(Exception.class, () -> {
             facade.login(loginRequestWrongPass);
         });
+
+        // Login Empty
+        LoginRequest loginRequestEmpty = new LoginRequest("", "");
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.login(loginRequestEmpty);
+        });
+
+        LoginRequest loginRequestNull = new LoginRequest(null, null);
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.login(loginRequestEmpty);
+        });
     }
 
     @Test
@@ -93,12 +117,32 @@ public class ServerFacadeTests {
 
     @Test
     void positiveCreateGame() throws Exception {
+        CreateGameRequest createGameRequest = new CreateGameRequest("test_game_name");
+        CreateGameResult createGameResult = facade.createGame(createGameRequest, this.authtoken);
 
+        ListGamesRequest listGamesRequest = new ListGamesRequest(this.authtoken);
+        ListGamesResult listGamesResult = facade.listGames(listGamesRequest.authToken());
+        for (ListGameData listGameData : listGamesResult.games()) {
+            if (listGameData.gameID() == createGameResult.gameID()) {
+                Assertions.assertEquals(listGameData.gameName(), "test_game_name");
+                Assertions.assertEquals(listGameData.gameID(), createGameResult.gameID());
+            } else {
+                throw new Exception();
+            }
+        }
     }
 
     @Test
     void negativeCreateGame() throws Exception {
+        CreateGameRequest createGameRequestEmpty = new CreateGameRequest("");
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.createGame(createGameRequestEmpty, this.authtoken);
+        });
 
+        CreateGameRequest createGameRequestNull = new CreateGameRequest(null);
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.createGame(createGameRequestNull, this.authtoken);
+        });
     }
 
     @Test
