@@ -49,20 +49,28 @@ public class ClientPreLogin {
 
     public String login(String... params) throws ResponseException {
         if (params.length >= 2) {
-            LoginResult loginResult = serverFacade.login(new LoginRequest(params[0], params[1]));
-            this.setState(State.SIGNEDIN);
-            this.currentAuthToken = loginResult.authToken();
-            return String.format("You signed in as %s.", loginResult.username());
+            try {
+                LoginResult loginResult = serverFacade.login(new LoginRequest(params[0], params[1]));
+                this.setState(State.SIGNEDIN);
+                this.currentAuthToken = loginResult.authToken();
+                return String.format("You signed in as %s.", loginResult.username());
+            } catch (Exception e) {
+                return e.getMessage();
+            }
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
 
     public String register(String... params) throws ResponseException {
         if (params.length >= 3) {
-            RegisterResult registerResult = serverFacade.register(new RegisterRequest(params[0], params[1], params[2]));
-            this.setState(State.SIGNEDIN);
-            this.currentAuthToken = registerResult.authToken();
-            return String.format("You registered and signed in as %s.", registerResult.username());
+            try {
+                RegisterResult registerResult = serverFacade.register(new RegisterRequest(params[0], params[1], params[2]));
+                this.setState(State.SIGNEDIN);
+                this.currentAuthToken = registerResult.authToken();
+                return String.format("You registered and signed in as %s.", registerResult.username());
+            } catch (Exception e) {
+                return e.getMessage();
+            }
         }
         throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }

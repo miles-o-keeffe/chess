@@ -2,6 +2,7 @@ package client;
 
 import exception.ResponseException;
 import model.GameData;
+import org.junit.jupiter.api.Assertions;
 import request.*;
 import result.*;
 
@@ -42,8 +43,12 @@ public class ClientLoggedIn {
 
     public String createGame(String... params) throws ResponseException {
         if (params.length >= 1) {
-            CreateGameResult createGameResult = serverFacade.createGame(new CreateGameRequest(params[0]), currentAuthToken);
-            return String.format("Game \"" + params[0] + "\" created", createGameResult.gameID());
+            try {
+                CreateGameResult createGameResult = serverFacade.createGame(new CreateGameRequest(params[0]), currentAuthToken);
+                return String.format("Game \"" + params[0] + "\" created", createGameResult.gameID());
+            } catch (Exception e) {
+                return e.getMessage();
+            }
         }
         throw new ResponseException(400, "Expected: <NAME>");
     }
@@ -52,27 +57,46 @@ public class ClientLoggedIn {
         if (params.length >= 1) {
             throw new ResponseException(400, "Expected no parameters");
         }
-        ListGamesResult listGamesResult = serverFacade.listGames(currentAuthToken);
-        this.recentGameList = listGamesResult.games();
+        try {
+            ListGamesResult listGamesResult = serverFacade.listGames(currentAuthToken);
+            this.recentGameList = listGamesResult.games();
 
-        for (int i = 0; i < listGamesResult.games().size(); i++) {
-            ListGameData currentListGameData = listGamesResult.games().get(i);
-            System.out.println(i + 1 + ".   Game Name: " + currentListGameData.gameName() + ", White: "
-                    + currentListGameData.whiteUsername() + ", Black: " + currentListGameData.blackUsername());
+            for (int i = 0; i < listGamesResult.games().size(); i++) {
+                ListGameData currentListGameData = listGamesResult.games().get(i);
+                System.out.println(i + 1 + ".   Game Name: " + currentListGameData.gameName() + ", White: "
+                        + currentListGameData.whiteUsername() + ", Black: " + currentListGameData.blackUsername());
+            }
+            return "";
+        } catch (Exception e) {
+            return e.getMessage();
         }
-        return "";
     }
 
     public String joinGame(String... params) throws ResponseException {
         if (recentGameList == null) {
             return "You must call list games before joining a game";
         }
+
         if (params.length >= 2) {
-            int mySQLGameID = recentGameList.get(Integer.parseInt(params[0]) - 1).gameID();
-            serverFacade.joinGame(new JoinGameRequest(params[1], mySQLGameID), currentAuthToken);
-            this.setGameJoinedID(mySQLGameID);
-            return String.format("Game \"" + params[0] + "\" joined%n");
+            try {
+
+                if (!params[0].matches("-?\\d+")) {
+                    return "<ID> must be a number";
+                }
+
+                if (Integer.parseInt(params[0]) > recentGameList.size() || Integer.parseInt(params[0]) < 1) {
+                    return "<ID> must be from the list of games";
+                }
+
+                int mySQLGameID = recentGameList.get(Integer.parseInt(params[0]) - 1).gameID();
+                serverFacade.joinGame(new JoinGameRequest(params[1], mySQLGameID), currentAuthToken);
+                this.setGameJoinedID(mySQLGameID);
+                return String.format("Game \"" + params[0] + "\" joined%n");
+            } catch (Exception e) {
+                return e.getMessage();
+            }
         }
+
         throw new ResponseException(400, "Expected: <ID> [WHITE|BLACK]");
     }
 
@@ -80,17 +104,36 @@ public class ClientLoggedIn {
         if (recentGameList == null) {
             return "You must call list games before joining a game";
         }
+
         if (params.length >= 1) {
-            int mySQLGameID = recentGameList.get(Integer.parseInt(params[0]) - 1).gameID();
-            this.setGameJoinedID(mySQLGameID);
-            this.setObserving(true);
-            return String.format("Game \"" + params[0] + "\" joined as an observer");
+            try {
+
+                if (!params[0].matches("-?\\d+")) {
+                    return "<ID> must be a number";
+                }
+
+                if (Integer.parseInt(params[0]) > recentGameList.size() || Integer.parseInt(params[0]) < 1) {
+                    return "<ID> must be from the list of games";
+                }
+
+                int mySQLGameID = recentGameList.get(Integer.parseInt(params[0]) - 1).gameID();
+                this.setGameJoinedID(mySQLGameID);
+                this.setObserving(true);
+                return String.format("Game \"" + params[0] + "\" joined as an observer");
+            } catch (Exception e) {
+                return e.getMessage();
+            }
         }
+
         throw new ResponseException(400, "Expected: <ID>");
     }
 
     public String logout() throws ResponseException {
-        LogoutResult logoutResult = serverFacade.logout(new LogoutRequest(currentAuthToken));
+        try {
+            LogoutResult logoutResult = serverFacade.logout(new LogoutRequest(currentAuthToken));
+        } catch (Exception e) {
+            return e.getMessage();
+        }
         return "quit";
     }
 
