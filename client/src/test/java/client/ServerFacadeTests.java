@@ -1,17 +1,12 @@
 package client;
 
-import chess.ChessGame;
-import dataaccess.DataAccessException;
 import exception.ResponseException;
-import model.AuthData;
 import org.junit.jupiter.api.*;
 import request.*;
 import result.*;
 import server.Server;
 
-import javax.sql.rowset.Joinable;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Random;
 
 
@@ -219,12 +214,21 @@ public class ServerFacadeTests {
 
     @Test
     void positiveLogout() throws Exception {
+        LoginRequest loginRequest = new LoginRequest(auth_username, "password");
+        LoginResult loginResult = facade.login(loginRequest);
 
+        // Makes sure LogoutResult returns properly
+        LogoutRequest logoutRequest = new LogoutRequest(loginResult.authToken());
+        LogoutResult logoutResult = facade.logout(logoutRequest);
+        Assertions.assertEquals(logoutResult, new LogoutResult());
     }
 
     @Test
     void negativeLogout() throws Exception {
-
+        LogoutRequest logoutRequestBogusAuth = new LogoutRequest("Bogus_Auth");
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.logout(logoutRequestBogusAuth);
+        });
     }
 
 }
