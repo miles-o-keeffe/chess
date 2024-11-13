@@ -1,5 +1,7 @@
 package client;
 
+import dataaccess.DataAccessException;
+import model.AuthData;
 import org.junit.jupiter.api.*;
 import request.RegisterRequest;
 import result.RegisterResult;
@@ -54,7 +56,13 @@ public class ServerFacadeTests {
 
     @Test
     void negativeRegister() throws Exception {
-
+        Random random = new Random();
+        int randomNumber = random.nextInt(10000) + 1;
+        RegisterRequest registerRequest = new RegisterRequest("repeat_player" + randomNumber, "password", "p1@email.com");
+        RegisterResult registerResult = facade.register(registerRequest);
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.register(registerRequest);
+        });
     }
 
     @Test
