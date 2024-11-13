@@ -55,6 +55,21 @@ public class ServerFacade {
         return this.makeRequest("DELETE", path, request, LogoutResult.class, request.authToken());
     }
 
+    // For testing
+    public void clear() throws ResponseException {
+        var path = "/db";
+        try {
+            URL url = (new URI(serverURL + path)).toURL();
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            http.setRequestMethod("DELETE");
+            http.setDoOutput(true);
+            http.connect();
+            throwIfNotSuccessful(http);
+        } catch (Exception ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
+
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverURL + path)).toURL();
@@ -101,7 +116,11 @@ public class ServerFacade {
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
-            throw new ResponseException(status, "failure: " + status);
+            try (var errorStream = http.getErrorStream()) {
+                InputStreamReader reader = new InputStreamReader(errorStream);
+                ErrorResult errorResult = new Gson().fromJson(reader, ErrorResult.class);
+                throw new ResponseException(status, errorResult.message());
+            }
         }
     }
 

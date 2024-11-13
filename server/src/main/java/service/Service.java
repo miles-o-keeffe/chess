@@ -42,17 +42,17 @@ public class Service {
     public LoginResult login(LoginRequest loginRequest) throws ResponseException, DataAccessException {
         var userData = dataAccess.getUser(loginRequest.username());
         if (userData == null) {
-            throw new ResponseException(401, "Error: unauthorized");
+            throw new ResponseException(401, "Error: Username does not exist");
         }
 
         // Compares hashed password if we are using MySQL
         if (dataAccess instanceof MySqlDataAccess) {
             if (!BCrypt.checkpw(loginRequest.password(), userData.password())) {
-                throw new ResponseException(401, "Error: unauthorized");
+                throw new ResponseException(401, "Error: Wrong password");
             }
         } else {
             if (!Objects.equals(userData.password(), loginRequest.password())) {
-                throw new ResponseException(401, "Error: unauthorized");
+                throw new ResponseException(401, "Error: Wrong password");
             }
         }
 
@@ -112,7 +112,7 @@ public class Service {
 
         if ((Objects.equals(joinGameRequest.playerColor().toUpperCase(), "WHITE") && gameData.whiteUsername() != null)
                 || (Objects.equals(joinGameRequest.playerColor().toUpperCase(), "BLACK") && gameData.blackUsername() != null)) {
-            throw new ResponseException(403, "Error: already taken");
+            throw new ResponseException(403, "Error: color already taken");
         }
 
         String username = dataAccess.getAuth(authToken).username();

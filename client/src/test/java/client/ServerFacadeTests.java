@@ -1,16 +1,16 @@
 package client;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import exception.ResponseException;
 import model.AuthData;
 import org.junit.jupiter.api.*;
-import request.CreateGameRequest;
-import request.ListGamesRequest;
-import request.LoginRequest;
-import request.RegisterRequest;
+import request.*;
 import result.*;
 import server.Server;
 
+import javax.sql.rowset.Joinable;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
@@ -20,6 +20,7 @@ public class ServerFacadeTests {
     private static Server server;
     static ServerFacade facade;
     private String authtoken;
+    private final String auth_username = "auth_player";
 
     @BeforeAll
     public static void init() {
@@ -29,17 +30,14 @@ public class ServerFacadeTests {
         facade = new ServerFacade(port);
     }
 
-    @BeforeEach
-    public void clear() {
-//        var path = "/db";
-//        return this.makeRequest("DELETE", path, request, LogoutResult.class, request.authToken());
+    @AfterEach
+    public void clear() throws ResponseException {
+        facade.clear();
     }
 
     @BeforeEach
     public void generateAuthToken() throws ResponseException {
-        Random random = new Random();
-        int randomNumber = random.nextInt(10000) + 1;
-        RegisterRequest registerRequest = new RegisterRequest("player" + randomNumber, "password", "p1@email.com");
+        RegisterRequest registerRequest = new RegisterRequest(auth_username, "password", "p1@email.com");
         RegisterResult registerResult = facade.register(registerRequest);
 
         this.authtoken = registerResult.authToken();
@@ -48,6 +46,11 @@ public class ServerFacadeTests {
     @AfterAll
     static void stopServer() {
         server.stop();
+    }
+
+    @Test
+    public void clearTest() throws ResponseException {
+        facade.clear();
     }
 
     @Test
@@ -143,26 +146,75 @@ public class ServerFacadeTests {
         Assertions.assertThrows(Exception.class, () -> {
             facade.createGame(createGameRequestNull, this.authtoken);
         });
+
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.createGame(createGameRequestNull, "Bogus_Auth");
+        });
     }
 
     @Test
     void positiveListGame() throws Exception {
+        ListGamesResult listGamesResultEmpty = facade.listGames(this.authtoken);
+        Assertions.assertEquals(listGamesResultEmpty.games(), new ArrayList<ListGameData>());
 
+        for (int i = 0; i < 5; i++) {
+            CreateGameRequest createGameRequest = new CreateGameRequest("test_game_name" + i);
+            facade.createGame(createGameRequest, this.authtoken);
+        }
+
+        ListGamesResult listGamesResult = facade.listGames(this.authtoken);
+
+        for (int i = 0; i < 5; i++) {
+            Assertions.assertEquals(listGamesResult.games().get(i).gameName(), "test_game_name" + i);
+            Assertions.assertEquals(listGamesResult.games().get(i).gameID(), i + 1);
+        }
     }
 
     @Test
     void negativeListGame() throws Exception {
-
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.listGames("Bogus_Auth");
+        });
     }
 
     @Test
     void positiveJoinGame() throws Exception {
+        CreateGameRequest createGameRequest = new CreateGameRequest("test_game_name");
+        CreateGameResult createGameResult = facade.createGame(createGameRequest, this.authtoken);
 
+        JoinGameRequest joinGameRequestWHITE = new JoinGameRequest("WHITE", createGameResult.gameID());
+        facade.joinGame(joinGameRequestWHITE, this.authtoken);
+
+        ListGamesResult listGamesResultWhite = facade.listGames(this.authtoken);
+        Assertions.assertEquals(listGamesResultWhite.games().getFirst().whiteUsername(), this.auth_username);
+
+        JoinGameRequest joinGameRequestBlack = new JoinGameRequest("BLACK", createGameResult.gameID());
+        facade.joinGame(joinGameRequestBlack, this.authtoken);
+
+        ListGamesResult listGamesResultBlack = facade.listGames(this.authtoken);
+        Assertions.assertEquals(listGamesResultBlack.games().getFirst().blackUsername(), this.auth_username);
     }
 
     @Test
     void negativeJoinGame() throws Exception {
+        CreateGameRequest createGameRequest = new CreateGameRequest("test_game_name");
+        CreateGameResult createGameResult = facade.createGame(createGameRequest, this.authtoken);
 
+        JoinGameRequest joinGameRequestWHITE = new JoinGameRequest("WHITE", createGameResult.gameID());
+        facade.joinGame(joinGameRequestWHITE, this.authtoken);
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.joinGame(joinGameRequestWHITE, this.authtoken);
+        });
+
+
+        JoinGameRequest joinGameRequestBadID = new JoinGameRequest("WHITE", 9999);
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.joinGame(joinGameRequestBadID, this.authtoken);
+        });
+
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.joinGame(joinGameRequestWHITE, "BOGUS_AUTH");
+        });
     }
 
     @Test

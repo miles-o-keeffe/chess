@@ -24,7 +24,7 @@ public class ReplLoggedIn {
                 result = client.eval(line);
                 System.out.print(result);
             } catch (Throwable e) {
-                var msg = e.toString();
+                var msg = e.getMessage();
                 System.out.print(msg);
             }
 
