@@ -33,7 +33,8 @@ public class ClientLoggedIn {
                 case "list" -> listGames(params);
                 case "join" -> joinGame(params);
                 case "observe" -> observeGame(params);
-                case "logout", "quit" -> logout();
+                case "logout" -> logout();
+                // case "quit" -> logout();
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -102,7 +103,7 @@ public class ClientLoggedIn {
 
     public String observeGame(String... params) throws ResponseException {
         if (recentGameList == null) {
-            return "You must call list games before joining a game";
+            return "You must call list games before observing a game";
         }
 
         if (params.length >= 1) {
@@ -134,7 +135,7 @@ public class ClientLoggedIn {
         } catch (Exception e) {
             return e.getMessage();
         }
-        return "quit";
+        return "logging out...";
     }
 
     public String help() {
@@ -143,7 +144,7 @@ public class ClientLoggedIn {
                 "join <ID> [WHITE|BLACK] - a game\n" +
                 "observe <ID> - a game\n" +
                 "logout - when you are done\n" +
-                "quit - playing chess\n" +
+                // "quit - playing chess\n" +
                 "help - with possible commands";
     }
 

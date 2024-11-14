@@ -1,7 +1,5 @@
 package client;
 
-import result.LoginResult;
-
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
@@ -37,6 +35,7 @@ public class ReplPreLogin {
             }
         }
         System.out.println();
+        System.out.print("Goodbye!");
     }
 
     private void printPrompt() {

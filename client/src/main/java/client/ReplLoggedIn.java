@@ -16,7 +16,7 @@ public class ReplLoggedIn {
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (!result.equals("quit")) {
+        while (!result.equals("logging out...")) {
             printPrompt();
             String line = scanner.nextLine();
 

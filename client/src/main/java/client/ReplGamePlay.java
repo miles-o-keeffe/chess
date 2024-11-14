@@ -15,6 +15,7 @@ public class ReplGamePlay {
     }
 
     public void run() {
+        System.out.println();
         ChessBoard chessBoard = new ChessBoard();
         chessBoard.resetBoard();
         client.drawGame(chessBoard);
