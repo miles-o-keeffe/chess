@@ -131,7 +131,7 @@ public class Service {
         } else if (Objects.equals(joinGameRequest.playerColor().toUpperCase(), "BLACK")) {
             newGameData = new GameData(joinGameRequest.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.game());
         } else {
-            throw new ResponseException(400, "Error: Color must be White or Black");
+            throw new ResponseException(400, "Error: color must be white or black");
         }
         return newGameData;
     }
