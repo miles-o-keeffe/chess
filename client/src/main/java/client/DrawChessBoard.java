@@ -89,9 +89,9 @@ public class DrawChessBoard {
             String pieceToPrint = "";
             ChessPiece currPiece;
             if (orientation == BoardOrientation.BLACK) {
-                currPiece = chessBoard.getPiece(new ChessPosition(row, col));
+                currPiece = chessBoard.getPiece(new ChessPosition(row, (col * -1) + 9));
             } else {
-                currPiece = chessBoard.getPiece(new ChessPosition((row * -1) + 9, (col * -1) + 9));
+                currPiece = chessBoard.getPiece(new ChessPosition((row * -1) + 9, col));
             }
 
             if (currPiece != null) {
