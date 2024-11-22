@@ -1,20 +1,25 @@
 package client;
 
 import chess.ChessBoard;
+import chess.ChessGame;
+import client.websocket.MessageHandler;
+import client.websocket.WebSocketFacade;
 import exception.ResponseException;
 
 import java.util.Arrays;
 
 public class ClientGamePlay {
     private final String serverURL;
-    private String currentAuthToken;
     private int gameID;
+    private ChessGame.TeamColor teamColor;
     private final DrawChessBoard chessBoardDrawer = new DrawChessBoard();
+    private WebSocketFacade ws;
 
-    public ClientGamePlay(String serverURL, String currentAuthToken, int gameID) {
+    public ClientGamePlay(String serverURL, ChessGame.TeamColor teamColor, int gameID, MessageHandler msgHandler) throws ResponseException {
         this.serverURL = serverURL;
-        this.currentAuthToken = currentAuthToken;
+        this.teamColor = teamColor;
         this.gameID = gameID;
+        ws = new WebSocketFacade(this.serverURL, msgHandler);
     }
 
     public String eval(String line) {
@@ -36,9 +41,7 @@ public class ClientGamePlay {
     }
 
     public void drawGame(ChessBoard chessBoardToDraw) {
-        chessBoardDrawer.drawBoard(chessBoardToDraw, DrawChessBoard.BoardOrientation.BLACK);
-        chessBoardDrawer.drawBreakBlack();
-        chessBoardDrawer.drawBoard(chessBoardToDraw, DrawChessBoard.BoardOrientation.WHITE);
+        chessBoardDrawer.drawBoard(chessBoardToDraw, this.teamColor);
     }
 
     private String redrawBoard() throws ResponseException {

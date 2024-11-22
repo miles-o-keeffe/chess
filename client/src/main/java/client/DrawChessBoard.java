@@ -30,8 +30,15 @@ public class DrawChessBoard {
         BLACK
     }
 
-    public void drawBoard(ChessBoard chessBoard, BoardOrientation orientation) {
+    public void drawBoard(ChessBoard chessBoard, ChessGame.TeamColor teamColor) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+
+        BoardOrientation orientation;
+        if (teamColor == ChessGame.TeamColor.WHITE) {
+            orientation = BoardOrientation.WHITE;
+        } else {
+            orientation = BoardOrientation.BLACK;
+        }
 
         for (int r = 0; r < 10; r++) {
             for (int c = 0; c < 10; c++) {

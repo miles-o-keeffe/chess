@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import exception.ResponseException;
 import model.GameData;
 import org.junit.jupiter.api.Assertions;
@@ -8,11 +9,13 @@ import result.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class ClientLoggedIn {
     private final String serverURL;
     private final ServerFacade serverFacade;
     private final String currentAuthToken;
+    private ChessGame.TeamColor teamColor;
     private ArrayList<ListGameData> recentGameList;
     private int gameJoinedID = -1;
     private boolean isObserving = false;
@@ -92,6 +95,14 @@ public class ClientLoggedIn {
                 int mySQLGameID = recentGameList.get(Integer.parseInt(params[0]) - 1).gameID();
                 serverFacade.joinGame(new JoinGameRequest(params[1], mySQLGameID), currentAuthToken);
                 this.setGameJoinedID(mySQLGameID);
+
+                // Sets the team color
+                if (Objects.equals(params[1], "WHITE")) {
+                    this.teamColor = ChessGame.TeamColor.WHITE;
+                } else {
+                    this.teamColor = ChessGame.TeamColor.BLACK;
+                }
+
                 return String.format("Game \"" + params[0] + "\" joined%n");
             } catch (Exception e) {
                 return e.getMessage();
@@ -171,5 +182,11 @@ public class ClientLoggedIn {
     public String getCurrentAuthToken() {
         return currentAuthToken;
     }
+
+
+    public ChessGame.TeamColor getTeamColor() {
+        return teamColor;
+    }
+
 
 }
