@@ -8,12 +8,14 @@ import dataaccess.MySqlDataAccess;
 import exception.ResponseException;
 import request.*;
 import result.*;
+import server.websocket.WebSocketHandler;
 import service.Service;
 import spark.*;
 
 public class Server {
     private final DataAccess dataAccess;
     private final Service service;
+    private final WebSocketHandler webSocketHandler;
 
     public Server() {
         try {
@@ -22,11 +24,13 @@ public class Server {
             throw new RuntimeException(e);
         }
         this.service = new Service(this.dataAccess);
+        this.webSocketHandler = new WebSocketHandler();
     }
 
     public Server(DataAccess dataAccess) {
         this.dataAccess = dataAccess;
         this.service = new Service(this.dataAccess);
+        this.webSocketHandler = new WebSocketHandler();
     }
 
     public int run(int desiredPort) {
@@ -37,7 +41,8 @@ public class Server {
         // Register your endpoints and handle exceptions here.
 
         //This line initializes the server and can be removed once you have a functioning endpoint
-        Spark.init();
+        Spark.webSocket("/ws", this.webSocketHandler);
+
         Spark.post("/user", this::createUser);
         Spark.delete("/db", this::clear);
         Spark.post("/session", this::login);

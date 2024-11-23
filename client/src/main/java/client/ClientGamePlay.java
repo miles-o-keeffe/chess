@@ -14,12 +14,14 @@ public class ClientGamePlay {
     private ChessGame.TeamColor teamColor;
     private final DrawChessBoard chessBoardDrawer = new DrawChessBoard();
     private WebSocketFacade ws;
+    private boolean isObserving = false;
 
-    public ClientGamePlay(String serverURL, ChessGame.TeamColor teamColor, int gameID, MessageHandler msgHandler) throws ResponseException {
+    public ClientGamePlay(String serverURL, ChessGame.TeamColor teamColor, int gameID, MessageHandler msgHandler, boolean isObserving) throws ResponseException {
         this.serverURL = serverURL;
         this.teamColor = teamColor;
         this.gameID = gameID;
         ws = new WebSocketFacade(this.serverURL, msgHandler);
+        this.isObserving = isObserving;
     }
 
     public String eval(String line) {
@@ -51,7 +53,7 @@ public class ClientGamePlay {
 
     private String leaveGame() {
 
-        return "";
+        return "leave";
     }
 
     private String makeMove(String... params) {
@@ -61,7 +63,7 @@ public class ClientGamePlay {
 
     private String resign() {
 
-        return "";
+        return "resign";
     }
 
     private String highlightMoves(String... params) {

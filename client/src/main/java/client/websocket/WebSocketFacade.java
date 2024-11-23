@@ -16,7 +16,7 @@ public class WebSocketFacade extends Endpoint {
 
     public WebSocketFacade(String serverURL, MessageHandler messageHandler) throws ResponseException {
         try {
-            serverURL = serverURL.replace("https", "ws");
+            serverURL = serverURL.replace("http", "ws");
             URI socketURI = new URI(serverURL + "/ws");
             this.messageHandler = messageHandler;
 

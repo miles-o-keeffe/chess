@@ -31,7 +31,7 @@ public class ReplLoggedIn {
             if (client.getGameJoinedID() > 0) {
                 int newGameJoinedID = client.getGameJoinedID();
                 client.setGameJoinedID(0);
-                new ReplGamePlay(client.getServerURL(), client.getTeamColor(), newGameJoinedID).run();
+                new ReplGamePlay(client.getServerURL(), client.getTeamColor(), newGameJoinedID, client.isObserving()).run();
             }
         }
 

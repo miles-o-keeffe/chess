@@ -17,19 +17,19 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
 public class ReplGamePlay implements MessageHandler {
     private ClientGamePlay client;
 
-    public ReplGamePlay(String serverUrl, ChessGame.TeamColor teamColor, int gameID) {
+    public ReplGamePlay(String serverUrl, ChessGame.TeamColor teamColor, int gameID, boolean isObserving) {
         try {
-            this.client = new ClientGamePlay(serverUrl, teamColor, gameID, this);
+            this.client = new ClientGamePlay(serverUrl, teamColor, gameID, this, isObserving);
         } catch (ResponseException e) {
             System.out.print("Unable to establish web socket connect. Error: " + e.getMessage());
         }
     }
 
     public void run() {
-        System.out.println();
-        ChessBoard chessBoard = new ChessBoard();
-        chessBoard.resetBoard();
-        client.drawGame(chessBoard);
+//        System.out.println();
+//        ChessBoard chessBoard = new ChessBoard();
+//        chessBoard.resetBoard();
+//        client.drawGame(chessBoard);
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
