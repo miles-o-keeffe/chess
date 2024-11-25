@@ -6,22 +6,28 @@ import client.websocket.MessageHandler;
 import client.websocket.WebSocketFacade;
 import exception.ResponseException;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 public class ClientGamePlay {
     private final String serverURL;
     private int gameID;
+    private String authToken;
     private ChessGame.TeamColor teamColor;
     private final DrawChessBoard chessBoardDrawer = new DrawChessBoard();
     private WebSocketFacade ws;
     private boolean isObserving = false;
 
-    public ClientGamePlay(String serverURL, ChessGame.TeamColor teamColor, int gameID, MessageHandler msgHandler, boolean isObserving) throws ResponseException {
+    public ClientGamePlay(String serverURL, ChessGame.TeamColor teamColor, int gameID,
+                          MessageHandler msgHandler, boolean isObserving, String authToken) throws ResponseException {
         this.serverURL = serverURL;
         this.teamColor = teamColor;
         this.gameID = gameID;
         ws = new WebSocketFacade(this.serverURL, msgHandler);
         this.isObserving = isObserving;
+        this.authToken = authToken;
+
+        this.connect();
     }
 
     public String eval(String line) {
@@ -42,9 +48,21 @@ public class ClientGamePlay {
         }
     }
 
+    public void connect() {
+        try {
+            ws.connect(this.authToken, this.gameID);
+        } catch (ResponseException e) {
+            System.out.println("Error: Couldn't connect to server");
+        }
+    }
+
     public void drawGame(ChessBoard chessBoardToDraw) {
         chessBoardDrawer.drawBoard(chessBoardToDraw, this.teamColor);
     }
+
+//    public void drawGame() {
+//        chessBoardDrawer.drawBoard(chessBoardToDraw, this.teamColor);
+//    }
 
     private String redrawBoard() throws ResponseException {
 

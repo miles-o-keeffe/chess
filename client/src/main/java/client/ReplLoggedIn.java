@@ -7,9 +7,11 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
 
 public class ReplLoggedIn {
     private final ClientLoggedIn client;
+    private final String authToken;
 
     public ReplLoggedIn(String serverUrl, String currentAuthToken) {
         this.client = new ClientLoggedIn(serverUrl, currentAuthToken);
+        this.authToken = currentAuthToken;
     }
 
     public void run() {
@@ -31,7 +33,7 @@ public class ReplLoggedIn {
             if (client.getGameJoinedID() > 0) {
                 int newGameJoinedID = client.getGameJoinedID();
                 client.setGameJoinedID(0);
-                new ReplGamePlay(client.getServerURL(), client.getTeamColor(), newGameJoinedID, client.isObserving()).run();
+                new ReplGamePlay(client.getServerURL(), client.getTeamColor(), newGameJoinedID, client.isObserving(), this.authToken).run();
             }
         }
 

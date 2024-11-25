@@ -2,6 +2,8 @@ package client.websocket;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import websocket.commands.ConnectCommand;
+import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
@@ -32,6 +34,16 @@ public class WebSocketFacade extends Endpoint {
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new ResponseException(500, ex.getMessage());
+        }
+    }
+
+    public void connect(String authToken, int gameID) throws ResponseException {
+        try {
+            ConnectCommand connectCommand = new ConnectCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(connectCommand));
+            this.session.close();
+        } catch (IOException e) {
+            throw new ResponseException(500, e.getMessage());
         }
     }
 
