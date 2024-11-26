@@ -50,28 +50,20 @@ public class ReplGamePlay implements MessageHandler {
     }
 
     @Override
-    public void serverMsgRouter(ServerMessage serverMsg) {
-        if (serverMsg instanceof LoadGameMessage) {
-            loadGameMessageNotify((LoadGameMessage) serverMsg);
-        } else if (serverMsg instanceof ErrorMessage) {
-            errorMessageNotify((ErrorMessage) serverMsg);
-        } else {
-            notificationMessageNotify((NotificationMessage) serverMsg);
-        }
-    }
-
-    @Override
     public void loadGameMessageNotify(LoadGameMessage loadGameMsg) {
-        System.out.print("Game to print");
+        System.out.print("\n" + "Game to print");
+        printPrompt();
     }
 
     @Override
     public void errorMessageNotify(ErrorMessage errorMsg) {
-        System.out.print(errorMsg.getErrorMessage());
+        System.out.print("\n" + errorMsg.getErrorMessage());
+        printPrompt();
     }
 
     @Override
     public void notificationMessageNotify(NotificationMessage notificationMsg) {
-        System.out.print(notificationMsg.getMessage());
+        System.out.print("\n" + notificationMsg.getMessage());
+        printPrompt();
     }
 }
