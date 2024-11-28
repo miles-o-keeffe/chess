@@ -46,12 +46,13 @@ public class ReplGamePlay implements MessageHandler {
     }
 
     private void printPrompt() {
-        System.out.print("\n" + "[GAME_PLAY] " + SET_TEXT_COLOR_RED + ">>> " + SET_TEXT_COLOR_GREEN);
+        System.out.print(SET_TEXT_COLOR_GREEN + "\n" + "[GAME_PLAY] " + SET_TEXT_COLOR_RED + ">>> " + SET_TEXT_COLOR_GREEN);
     }
 
     @Override
     public void loadGameMessageNotify(LoadGameMessage loadGameMsg) {
-        System.out.print("\n" + "Game to print");
+        System.out.println();
+        client.drawGame(loadGameMsg.getGame().game().getBoard());
         printPrompt();
     }
 
