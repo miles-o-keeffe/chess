@@ -4,6 +4,7 @@ import chess.ChessMove;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import websocket.commands.ConnectCommand;
+import websocket.commands.LeaveCommand;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
@@ -53,18 +54,23 @@ public class WebSocketFacade extends Endpoint {
     }
 
     public void connect(String authToken, int gameID) throws ResponseException {
-        try {
-            ConnectCommand connectCommand = new ConnectCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
-            this.session.getBasicRemote().sendText(new Gson().toJson(connectCommand));
-        } catch (IOException e) {
-            throw new ResponseException(500, e.getMessage());
-        }
+        ConnectCommand connectCommand = new ConnectCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+        this.send(connectCommand);
     }
 
     public void makeMove(String authToken, int gameID, ChessMove chessMove) throws ResponseException {
+        MakeMoveCommand makeMoveCommand = new MakeMoveCommand(authToken, gameID, chessMove);
+        this.send(makeMoveCommand);
+    }
+
+    public void leave(String authToken, int gameID) throws ResponseException {
+        LeaveCommand leaveCommand = new LeaveCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+        this.send(leaveCommand);
+    }
+
+    public void send(UserGameCommand command) throws ResponseException {
         try {
-            MakeMoveCommand makeMoveCommand = new MakeMoveCommand(authToken, gameID, chessMove);
-            this.session.getBasicRemote().sendText(new Gson().toJson(makeMoveCommand));
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException e) {
             throw new ResponseException(500, e.getMessage());
         }

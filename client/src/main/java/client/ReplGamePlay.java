@@ -52,6 +52,7 @@ public class ReplGamePlay implements MessageHandler {
     public void loadGameMessageNotify(LoadGameMessage loadGameMsg) {
         System.out.println();
         client.drawGame(loadGameMsg.getGame().game().getBoard());
+        client.setRecentChessGame(loadGameMsg.getGame().game());
         printPrompt();
     }
 

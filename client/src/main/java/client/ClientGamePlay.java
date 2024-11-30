@@ -7,6 +7,9 @@ import chess.ChessPosition;
 import client.websocket.MessageHandler;
 import client.websocket.WebSocketFacade;
 import exception.ResponseException;
+import websocket.commands.LeaveCommand;
+import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -18,7 +21,8 @@ public class ClientGamePlay {
     private ChessGame.TeamColor teamColor;
     private final DrawChessBoard chessBoardDrawer = new DrawChessBoard();
     private WebSocketFacade ws;
-    private boolean isObserving = false;
+    private boolean isObserving;
+    private ChessGame recentChessGame;
 
     public ClientGamePlay(String serverURL, ChessGame.TeamColor teamColor, int gameID,
                           MessageHandler msgHandler, boolean isObserving, String authToken) throws ResponseException {
@@ -63,12 +67,16 @@ public class ClientGamePlay {
     }
 
     private String redrawBoard() throws ResponseException {
-
+        chessBoardDrawer.drawBoard(this.recentChessGame.getBoard(), this.teamColor);
         return "";
     }
 
     private String leaveGame() {
-
+        try {
+            ws.leave(this.authToken, this.gameID);
+        } catch (ResponseException e) {
+            System.out.println("Error: Couldn't connect to server");
+        }
         return "leave";
     }
 
@@ -129,5 +137,9 @@ public class ClientGamePlay {
                 "resign - from the game\n" +
                 "highlight <CHESS POSITION> - to see valid moves. format: e4" +
                 "help - with possible commands\n";
+    }
+
+    public void setRecentChessGame(ChessGame recentChessGame) {
+        this.recentChessGame = recentChessGame;
     }
 }
