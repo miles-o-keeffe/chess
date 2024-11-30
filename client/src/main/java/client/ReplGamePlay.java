@@ -11,8 +11,7 @@ import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
 
-import static ui.EscapeSequences.SET_TEXT_COLOR_GREEN;
-import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
+import static ui.EscapeSequences.*;
 
 public class ReplGamePlay implements MessageHandler {
     private ClientGamePlay client;
@@ -58,13 +57,13 @@ public class ReplGamePlay implements MessageHandler {
 
     @Override
     public void errorMessageNotify(ErrorMessage errorMsg) {
-        System.out.print("\n" + errorMsg.getErrorMessage());
+        System.out.print("\n" + SET_TEXT_COLOR_RED + errorMsg.getErrorMessage());
         printPrompt();
     }
 
     @Override
     public void notificationMessageNotify(NotificationMessage notificationMsg) {
-        System.out.print("\n" + notificationMsg.getMessage());
+        System.out.print("\n" + SET_TEXT_COLOR_BLUE + notificationMsg.getMessage());
         printPrompt();
     }
 }

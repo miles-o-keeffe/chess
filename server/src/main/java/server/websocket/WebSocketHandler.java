@@ -16,6 +16,7 @@ import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @WebSocket
 public class WebSocketHandler {
@@ -44,7 +45,7 @@ public class WebSocketHandler {
 
         if (userGameCommand.getCommandType() == UserGameCommand.CommandType.CONNECT) {
             ConnectCommand connectCommand = new Gson().fromJson(message, ConnectCommand.class);
-            connect(connectCommand);
+            connect(authData.username(), connectCommand, session);
         } else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.LEAVE) {
             LeaveCommand leaveCommand = new Gson().fromJson(message, LeaveCommand.class);
         } else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
@@ -59,7 +60,7 @@ public class WebSocketHandler {
 
     }
 
-    public void connect(ConnectCommand connectCommand) {
+    public void connect(String username, ConnectCommand connectCommand, Session session) {
         GameData gameData = null;
         try {
             gameData = dataAccess.getGame(connectCommand.getGameID());
@@ -73,12 +74,29 @@ public class WebSocketHandler {
             return;
         }
 
+        connections.add(username, gameData.gameID(), session);
+
+        String joinMessage = username + " joined as ";
+        if (Objects.equals(gameData.whiteUsername(), username)) {
+            joinMessage += "WHITE";
+        } else if (Objects.equals(gameData.blackUsername(), username)) {
+            joinMessage += "BLACK";
+        } else {
+            joinMessage += "an observer";
+        }
+
         LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData);
         sendJSON(new Gson().toJson(loadGameMessage));
+        NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, joinMessage);
+        try {
+            connections.notifyAllInGame(username, gameData.gameID(), notificationMessage);
+        } catch (IOException e) {
+            System.out.println("Unable to send message");
+        }
     }
 
     public void makeMove(MakeMoveCommand makeMoveCommand) {
-
+        // Check if they are an observer
     }
 
     public AuthData authenticate(String authToken) {
