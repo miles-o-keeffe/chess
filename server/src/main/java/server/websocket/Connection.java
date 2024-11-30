@@ -5,8 +5,9 @@ import org.eclipse.jetty.websocket.api.Session;
 import java.io.IOException;
 
 public class Connection {
-    public int gameID;
-    public Session session;
+    private final int gameID;
+    private final Session session;
+    private boolean isGameOver = false;
 
     public Connection(int gameID, Session session) {
         this.gameID = gameID;
@@ -23,5 +24,13 @@ public class Connection {
 
     public void send(String msg) throws IOException {
         session.getRemote().sendString(msg);
+    }
+
+    public boolean isGameOver() {
+        return isGameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        isGameOver = gameOver;
     }
 }

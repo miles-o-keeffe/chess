@@ -119,7 +119,16 @@ public class ClientGamePlay {
     }
 
     private String resign() {
-
+        if (!isObserving) {
+            try {
+                ws.resign(this.authToken, this.gameID);
+            } catch (ResponseException e) {
+                System.out.println("Error: Couldn't connect to server");
+            }
+        } else {
+            System.out.println("Observers cannot resign");
+            return "";
+        }
         return "resign";
     }
 

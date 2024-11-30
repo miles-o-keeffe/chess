@@ -55,6 +55,7 @@ public class WebSocketHandler {
             makeMove(authData.username(), session, makeMoveCommand);
         } else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.RESIGN) {
             ResignCommand resignCommand = new Gson().fromJson(message, ResignCommand.class);
+            resign(authData.username(), resignCommand);
         }
     }
 
@@ -102,7 +103,7 @@ public class WebSocketHandler {
             return;
         }
 
-        if (isGameInCheckMate(gameData) || isGameInStalemate(gameData)) {
+        if (connections.isGameEnd(gameData.gameID())) {
             sendErrorMessage(currentSession, "The game has ended");
             return;
         }
@@ -140,37 +141,41 @@ public class WebSocketHandler {
             System.out.println("Unable to send load game messages");
         }
 
-        if (isGameInCheckMate(gameData)) {
-            if (gameData.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
-                String checkmateMsg = gameData.whiteUsername() + " is in Checkmate";
+        if (isGameInCheckMate(newGameData)) {
+            if (newGameData.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                String checkmateMsg = newGameData.whiteUsername() + " is in Checkmate. " + newGameData.blackUsername() + " has Won!";
                 NotificationMessage checkmateNotificationMsg = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmateMsg);
                 try {
-                    connections.notifyAllInGame(gameData.gameID(), checkmateNotificationMsg);
+                    connections.notifyAllInGame(newGameData.gameID(), checkmateNotificationMsg);
                 } catch (IOException e) {
                     System.out.println("Unable to send checkmate messages");
                 }
             } else {
-                String checkmateMsg = gameData.blackUsername() + " is in Checkmate";
+                String checkmateMsg = newGameData.blackUsername() + " is in Checkmate. " + newGameData.whiteUsername() + " has Won!";
                 NotificationMessage checkmateNotificationMsg = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmateMsg);
                 try {
-                    connections.notifyAllInGame(gameData.gameID(), checkmateNotificationMsg);
+                    connections.notifyAllInGame(newGameData.gameID(), checkmateNotificationMsg);
                 } catch (IOException e) {
                     System.out.println("Unable to send checkmate messages");
                 }
             }
+            connections.endGame(newGameData.gameID());
+            return;
         }
 
-        if (isGameInStalemate(gameData)) {
+        if (isGameInStalemate(newGameData)) {
             String stalemateMsg = "Game is in stalemate";
             NotificationMessage stalemateNotificationMsg = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, stalemateMsg);
             try {
-                connections.notifyAllInGame(gameData.gameID(), stalemateNotificationMsg);
+                connections.notifyAllInGame(newGameData.gameID(), stalemateNotificationMsg);
             } catch (IOException e) {
                 System.out.println("Unable to send stalemate messages");
             }
+            connections.endGame(newGameData.gameID());
+            return;
         }
 
-        notifyCheck(newChessGame, gameData);
+        notifyCheck(newChessGame, newGameData);
     }
 
     private void leave(String username, LeaveCommand leaveCommand) {
@@ -200,7 +205,19 @@ public class WebSocketHandler {
         try {
             connections.notifyAllOthersInGame(username, newGameData.gameID(), leaveNotificationMsg);
         } catch (IOException e) {
-            System.out.println("Unable to send load game messages");
+            System.out.println("Unable to send leave game messages");
+        }
+    }
+
+    private void resign(String username, ResignCommand resignCommand) {
+        connections.endGame(resignCommand.getGameID());
+
+        String resignMsg = username + " has resigned";
+        NotificationMessage resignNotificationMsg = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, resignMsg);
+        try {
+            connections.notifyAllInGame(resignCommand.getGameID(), resignNotificationMsg);
+        } catch (IOException e) {
+            System.out.println("Unable to send resign game messages");
         }
     }
 

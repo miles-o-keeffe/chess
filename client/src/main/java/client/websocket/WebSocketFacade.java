@@ -3,10 +3,7 @@ package client.websocket;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import exception.ResponseException;
-import websocket.commands.ConnectCommand;
-import websocket.commands.LeaveCommand;
-import websocket.commands.MakeMoveCommand;
-import websocket.commands.UserGameCommand;
+import websocket.commands.*;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
@@ -66,6 +63,11 @@ public class WebSocketFacade extends Endpoint {
     public void leave(String authToken, int gameID) throws ResponseException {
         LeaveCommand leaveCommand = new LeaveCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
         this.send(leaveCommand);
+    }
+
+    public void resign(String authToken, int gameID) throws ResponseException {
+        ResignCommand resignCommand = new ResignCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+        this.send(resignCommand);
     }
 
     public void send(UserGameCommand command) throws ResponseException {

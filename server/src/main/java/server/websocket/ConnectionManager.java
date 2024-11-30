@@ -44,4 +44,21 @@ public class ConnectionManager {
         }
     }
 
+    public void endGame(int gameID) {
+        for (var entry : connections.entrySet()) {
+            if (entry.getValue().getGameID() == gameID) {
+                entry.getValue().setGameOver(true);
+            }
+        }
+    }
+
+    public boolean isGameEnd(int gameID) {
+        for (var entry : connections.entrySet()) {
+            if (entry.getValue().getGameID() == gameID) {
+                return entry.getValue().isGameOver();
+            }
+        }
+        return false;
+    }
+
 }
