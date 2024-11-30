@@ -102,7 +102,7 @@ public class ChessGame {
      * @param move chess move to preform
      * @throws InvalidMoveException if move is invalid
      */
-    public void makeMove(ChessMove move) throws InvalidMoveException {
+    public ChessGame makeMove(ChessMove move) throws InvalidMoveException {
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         if (validMoves == null) {
             throw new InvalidMoveException("Not implemented");
@@ -112,6 +112,7 @@ public class ChessGame {
         } else {
             throw new InvalidMoveException("Not implemented");
         }
+        return this;
     }
 
     /**

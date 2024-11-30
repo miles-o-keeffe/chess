@@ -97,7 +97,7 @@ public class ClientLoggedIn {
                 this.setGameJoinedID(mySQLGameID);
 
                 // Sets the team color
-                if (Objects.equals(params[1], "WHITE")) {
+                if (Objects.equals(params[1].toUpperCase(), "WHITE")) {
                     this.teamColor = ChessGame.TeamColor.WHITE;
                 } else {
                     this.teamColor = ChessGame.TeamColor.BLACK;

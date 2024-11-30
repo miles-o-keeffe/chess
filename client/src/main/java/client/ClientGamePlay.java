@@ -77,6 +77,10 @@ public class ClientGamePlay {
     }
 
     private String makeMove(String... params) {
+        if (isObserving) {
+            System.out.print("Observers cannot make moves");
+        }
+
         if (params.length >= 2) {
             char startCol = params[0].charAt(0);
             char startRow = params[0].charAt(1);
@@ -103,8 +107,10 @@ public class ClientGamePlay {
 
     public ChessPosition validateMove(char row, char col) {
         if (col >= 97 && col <= 104 && Character.isLetter(col)
-                && row >= 1 && row <= 8 && Character.isDigit(row)) {
-            return new ChessPosition(row, col);
+                && row >= 49 && row <= 56 && Character.isDigit(row)) {
+            int rowInt = row - '0';
+            int colInt = col - '0' - 48;
+            return new ChessPosition(rowInt, colInt);
         }
         return null;
     }
