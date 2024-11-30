@@ -49,6 +49,7 @@ public class WebSocketHandler {
             LeaveCommand leaveCommand = new Gson().fromJson(message, LeaveCommand.class);
         } else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
             MakeMoveCommand makeMoveCommand = new Gson().fromJson(message, MakeMoveCommand.class);
+            makeMove(makeMoveCommand);
         } else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.RESIGN) {
             ResignCommand resignCommand = new Gson().fromJson(message, ResignCommand.class);
         }
@@ -74,6 +75,10 @@ public class WebSocketHandler {
 
         LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData);
         sendJSON(new Gson().toJson(loadGameMessage));
+    }
+
+    public void makeMove(MakeMoveCommand makeMoveCommand) {
+
     }
 
     public AuthData authenticate(String authToken) {

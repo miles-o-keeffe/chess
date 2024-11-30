@@ -2,6 +2,8 @@ package client;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import client.websocket.MessageHandler;
 import client.websocket.WebSocketFacade;
 import exception.ResponseException;
@@ -75,8 +77,36 @@ public class ClientGamePlay {
     }
 
     private String makeMove(String... params) {
+        if (params.length >= 2) {
+            char startCol = params[0].charAt(0);
+            char startRow = params[0].charAt(1);
 
+            char endCol = params[1].charAt(0);
+            char endRow = params[1].charAt(1);
+
+            ChessPosition startPosition = validateMove(startRow, startCol);
+            ChessPosition endPosition = validateMove(endRow, endCol);
+            if (startPosition == null || endPosition == null) {
+                return "Invalid Input";
+            }
+
+            ChessMove chessMove = new ChessMove(startPosition, endPosition, null);
+
+            try {
+                ws.makeMove(this.authToken, this.gameID, chessMove);
+            } catch (ResponseException e) {
+                System.out.print("Error: Couldn't connect to server");
+            }
+        }
         return "";
+    }
+
+    public ChessPosition validateMove(char row, char col) {
+        if (col >= 97 && col <= 104 && Character.isLetter(col)
+                && row >= 1 && row <= 8 && Character.isDigit(row)) {
+            return new ChessPosition(row, col);
+        }
+        return null;
     }
 
     private String resign() {
