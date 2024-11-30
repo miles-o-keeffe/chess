@@ -49,6 +49,7 @@ public class WebSocketHandler {
             connect(authData.username(), connectCommand, session);
         } else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.LEAVE) {
             LeaveCommand leaveCommand = new Gson().fromJson(message, LeaveCommand.class);
+            leave(authData.username(), leaveCommand);
         } else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
             MakeMoveCommand makeMoveCommand = new Gson().fromJson(message, MakeMoveCommand.class);
             makeMove(authData.username(), session, makeMoveCommand);
@@ -170,6 +171,37 @@ public class WebSocketHandler {
         }
 
         notifyCheck(newChessGame, gameData);
+    }
+
+    private void leave(String username, LeaveCommand leaveCommand) {
+        GameData gameData;
+        try {
+            gameData = dataAccess.getGame(leaveCommand.getGameID());
+        } catch (DataAccessException e) {
+            unableToConnectToDB(currentSession);
+            return;
+        }
+
+        GameData newGameData = gameData;
+        if (Objects.equals(username, gameData.whiteUsername())) {
+            newGameData = new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game());
+        } else if (Objects.equals(username, gameData.blackUsername())) {
+            newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), null, gameData.gameName(), gameData.game());
+        }
+
+        try {
+            dataAccess.updateGame(newGameData);
+        } catch (DataAccessException e) {
+            unableToConnectToDB(currentSession);
+        }
+
+        String leaveMsg = username + " left the game";
+        NotificationMessage leaveNotificationMsg = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, leaveMsg);
+        try {
+            connections.notifyAllOthersInGame(username, newGameData.gameID(), leaveNotificationMsg);
+        } catch (IOException e) {
+            System.out.println("Unable to send load game messages");
+        }
     }
 
     private boolean isGameInCheckMate(GameData gameData) {

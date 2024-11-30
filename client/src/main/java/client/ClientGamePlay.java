@@ -7,11 +7,7 @@ import chess.ChessPosition;
 import client.websocket.MessageHandler;
 import client.websocket.WebSocketFacade;
 import exception.ResponseException;
-import websocket.commands.LeaveCommand;
-import websocket.commands.UserGameCommand;
-import websocket.messages.LoadGameMessage;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 public class ClientGamePlay {
@@ -72,10 +68,12 @@ public class ClientGamePlay {
     }
 
     private String leaveGame() {
-        try {
-            ws.leave(this.authToken, this.gameID);
-        } catch (ResponseException e) {
-            System.out.println("Error: Couldn't connect to server");
+        if (!isObserving) {
+            try {
+                ws.leave(this.authToken, this.gameID);
+            } catch (ResponseException e) {
+                System.out.println("Error: Couldn't connect to server");
+            }
         }
         return "leave";
     }
