@@ -62,10 +62,6 @@ public class ClientGamePlay {
         chessBoardDrawer.drawBoard(chessBoardToDraw, this.teamColor);
     }
 
-//    public void drawGame() {
-//        chessBoardDrawer.drawBoard(chessBoardToDraw, this.teamColor);
-//    }
-
     private String redrawBoard() throws ResponseException {
 
         return "";
@@ -79,6 +75,7 @@ public class ClientGamePlay {
     private String makeMove(String... params) {
         if (isObserving) {
             System.out.print("Observers cannot make moves");
+            return "";
         }
 
         if (params.length >= 2) {

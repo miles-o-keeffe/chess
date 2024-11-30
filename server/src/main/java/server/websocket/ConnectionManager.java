@@ -1,7 +1,6 @@
 package server.websocket;
 
 import com.google.gson.Gson;
-import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 
@@ -21,9 +20,17 @@ public class ConnectionManager {
         connections.remove(visitorName);
     }
 
-    public void notifyAllInGame(String excludeUserName, int gameID, NotificationMessage notification) throws IOException {
+    public void notifyAllOthersInGame(String excludeUserName, int gameID, NotificationMessage notification) throws IOException {
         for (var entry : connections.entrySet()) {
             if ((!Objects.equals(entry.getKey(), excludeUserName) && entry.getValue().getGameID() == gameID)) {
+                entry.getValue().send(new Gson().toJson(notification));
+            }
+        }
+    }
+
+    public void notifyAllInGame(int gameID, NotificationMessage notification) throws IOException {
+        for (var entry : connections.entrySet()) {
+            if (entry.getValue().getGameID() == gameID) {
                 entry.getValue().send(new Gson().toJson(notification));
             }
         }

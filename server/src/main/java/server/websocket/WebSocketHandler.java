@@ -5,7 +5,6 @@ import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.MySqlDataAccess;
-import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
@@ -87,7 +86,7 @@ public class WebSocketHandler {
         sendJSON(new Gson().toJson(loadGameMessage));
         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, joinMessage);
         try {
-            connections.notifyAllInGame(username, gameData.gameID(), notificationMessage);
+            connections.notifyAllOthersInGame(username, gameData.gameID(), notificationMessage);
         } catch (IOException e) {
             System.out.println("Unable to send connection messages");
         }
@@ -99,6 +98,11 @@ public class WebSocketHandler {
             gameData = dataAccess.getGame(makeMoveCommand.getGameID());
         } catch (DataAccessException e) {
             unableToConnectToDB(currentSession);
+            return;
+        }
+
+        if (isGameInCheckMate(gameData) || isGameInStalemate(gameData)) {
+            sendErrorMessage(currentSession, "The game has ended");
             return;
         }
 
@@ -134,9 +138,75 @@ public class WebSocketHandler {
         } catch (IOException e) {
             System.out.println("Unable to send load game messages");
         }
+
+        if (isGameInCheckMate(gameData)) {
+            if (gameData.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                String checkmateMsg = gameData.whiteUsername() + " is in Checkmate";
+                NotificationMessage checkmateNotificationMsg = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmateMsg);
+                try {
+                    connections.notifyAllInGame(gameData.gameID(), checkmateNotificationMsg);
+                } catch (IOException e) {
+                    System.out.println("Unable to send checkmate messages");
+                }
+            } else {
+                String checkmateMsg = gameData.blackUsername() + " is in Checkmate";
+                NotificationMessage checkmateNotificationMsg = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmateMsg);
+                try {
+                    connections.notifyAllInGame(gameData.gameID(), checkmateNotificationMsg);
+                } catch (IOException e) {
+                    System.out.println("Unable to send checkmate messages");
+                }
+            }
+        }
+
+        if (isGameInStalemate(gameData)) {
+            String stalemateMsg = "Game is in stalemate";
+            NotificationMessage stalemateNotificationMsg = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, stalemateMsg);
+            try {
+                connections.notifyAllInGame(gameData.gameID(), stalemateNotificationMsg);
+            } catch (IOException e) {
+                System.out.println("Unable to send stalemate messages");
+            }
+        }
+
+        notifyCheck(newChessGame, gameData);
     }
 
-    public ChessGame.TeamColor getCurrentColor(String username, GameData gameData) {
+    private boolean isGameInCheckMate(GameData gameData) {
+        if (gameData.game().isInCheck(ChessGame.TeamColor.WHITE) || gameData.game().isInCheck(ChessGame.TeamColor.BLACK)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isGameInStalemate(GameData gameData) {
+        if (gameData.game().isInStalemate(ChessGame.TeamColor.WHITE) || gameData.game().isInStalemate(ChessGame.TeamColor.BLACK)) {
+            return true;
+        }
+        return false;
+    }
+
+    private void notifyCheck(ChessGame newChessGame, GameData gameData) {
+        if (newChessGame.isInCheck(ChessGame.TeamColor.WHITE)) {
+            String checkMessage = gameData.whiteUsername() + " is in check";
+            NotificationMessage checkNotificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkMessage);
+            try {
+                connections.notifyAllInGame(gameData.gameID(), checkNotificationMessage);
+            } catch (IOException e) {
+                System.out.println("Unable to send check messages");
+            }
+        } else if (newChessGame.isInCheck(ChessGame.TeamColor.BLACK)) {
+            String checkMessage = gameData.blackUsername() + " is in check";
+            NotificationMessage checkNotificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkMessage);
+            try {
+                connections.notifyAllInGame(gameData.gameID(), checkNotificationMessage);
+            } catch (IOException e) {
+                System.out.println("Unable to send check messages");
+            }
+        }
+    }
+
+    private ChessGame.TeamColor getCurrentColor(String username, GameData gameData) {
         ChessGame.TeamColor teamColor;
         if (Objects.equals(gameData.whiteUsername(), username)) {
             teamColor = ChessGame.TeamColor.WHITE;
@@ -148,11 +218,11 @@ public class WebSocketHandler {
         return teamColor;
     }
 
-    public boolean isObserver(String username, GameData gameData) {
+    private boolean isObserver(String username, GameData gameData) {
         return !Objects.equals(gameData.whiteUsername(), username) && !Objects.equals(gameData.blackUsername(), username);
     }
 
-    public AuthData authenticate(Session currentSession, String authToken) {
+    private AuthData authenticate(Session currentSession, String authToken) {
         AuthData authData = null;
         try {
             authData = dataAccess.getAuth(authToken);
@@ -163,7 +233,7 @@ public class WebSocketHandler {
         return authData;
     }
 
-    public void sendJSON(String json) {
+    private void sendJSON(String json) {
         try {
             this.currentSession.getRemote().sendString(json);
         } catch (IOException e) {
@@ -171,7 +241,7 @@ public class WebSocketHandler {
         }
     }
 
-    public void sendNotificationMessage(Session currentSession, String message) {
+    private void sendNotificationMessage(Session currentSession, String message) {
         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
         try {
             currentSession.getRemote().sendString(new Gson().toJson((notificationMessage)));
@@ -180,7 +250,7 @@ public class WebSocketHandler {
         }
     }
 
-    public void sendErrorMessage(Session currentSession, String message) {
+    private void sendErrorMessage(Session currentSession, String message) {
         ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
         try {
             currentSession.getRemote().sendString(new Gson().toJson((errorMessage)));
@@ -189,7 +259,7 @@ public class WebSocketHandler {
         }
     }
 
-    public void unableToConnectToDB(Session currentSession) {
+    private void unableToConnectToDB(Session currentSession) {
         String errorMessage = "Unable to connect to the database";
         System.out.println("Message Received but " + errorMessage);
         try {

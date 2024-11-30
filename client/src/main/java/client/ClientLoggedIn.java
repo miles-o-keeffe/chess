@@ -2,8 +2,6 @@ package client;
 
 import chess.ChessGame;
 import exception.ResponseException;
-import model.GameData;
-import org.junit.jupiter.api.Assertions;
 import request.*;
 import result.*;
 
