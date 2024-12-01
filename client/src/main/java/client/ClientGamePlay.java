@@ -9,6 +9,7 @@ import client.websocket.WebSocketFacade;
 import exception.ResponseException;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 public class ClientGamePlay {
     private final String serverURL;
@@ -59,11 +60,11 @@ public class ClientGamePlay {
     }
 
     public void drawGame(ChessBoard chessBoardToDraw) {
-        chessBoardDrawer.drawBoard(chessBoardToDraw, this.teamColor);
+        chessBoardDrawer.drawBoard(chessBoardToDraw, this.teamColor, null, null);
     }
 
     private String redrawBoard() throws ResponseException {
-        chessBoardDrawer.drawBoard(this.recentChessGame.getBoard(), this.teamColor);
+        chessBoardDrawer.drawBoard(this.recentChessGame.getBoard(), this.teamColor, null, null);
         return "";
     }
 
@@ -129,11 +130,24 @@ public class ClientGamePlay {
             System.out.println("Observers cannot resign");
             return "";
         }
-        return "resign";
+        return "";
     }
 
     private String highlightMoves(String... params) {
+        if (params.length >= 1) {
+            char col = params[0].charAt(0);
+            char row = params[0].charAt(1);
 
+            ChessPosition position = validateMove(row, col);
+
+            if (position == null) {
+                return "Invalid Input";
+            }
+
+            Collection<ChessMove> validMoves = this.recentChessGame.validMoves(position);
+
+            this.chessBoardDrawer.drawBoard(this.recentChessGame.getBoard(), this.teamColor, validMoves, position);
+        }
         return "";
     }
 

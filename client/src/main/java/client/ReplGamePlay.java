@@ -28,7 +28,7 @@ public class ReplGamePlay implements MessageHandler {
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (!(result.equals("leave") || result.equals("resign"))) {
+        while (!(result.equals("leave"))) {
             printPrompt();
             String line = scanner.nextLine();
 

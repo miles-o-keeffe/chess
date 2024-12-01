@@ -1,12 +1,10 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +28,7 @@ public class DrawChessBoard {
         BLACK
     }
 
-    public void drawBoard(ChessBoard chessBoard, ChessGame.TeamColor teamColor) {
+    public void drawBoard(ChessBoard chessBoard, ChessGame.TeamColor teamColor, Collection<ChessMove> validMoves, ChessPosition piecePosition) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         BoardOrientation orientation;
@@ -42,7 +40,7 @@ public class DrawChessBoard {
 
         for (int r = 0; r < 10; r++) {
             for (int c = 0; c < 10; c++) {
-                drawBorder(r, c, out, orientation);
+                drawBorder(r, c, out, orientation, validMoves);
 
                 drawPieces(r, c, out, orientation, chessBoard);
 
@@ -53,16 +51,20 @@ public class DrawChessBoard {
         }
     }
 
-    public void drawBorder(int row, int col, PrintStream out, BoardOrientation orientation) {
+    public void drawBorder(int row, int col, PrintStream out, BoardOrientation orientation, Collection<ChessMove> validMoves) {
 
         // Sets border color
         if (row == 0 || row == 9 || col == 0 || col == 9) {
             out.print(SET_BG_COLOR_DARK_GREY);
         } else {
-            if ((col + row) % 2 == 0) {
-                out.print(SET_BG_COLOR_LIGHT_GREY);
+            if (validMoves != null && !validMoves.isEmpty()) {
+                drawHighlights(row, col, out, orientation, validMoves);
             } else {
-                out.print(SET_BG_COLOR_BLACK);
+                if ((col + row) % 2 == 0) {
+                    out.print(SET_BG_COLOR_LIGHT_GREY);
+                } else {
+                    out.print(SET_BG_COLOR_BLACK);
+                }
             }
         }
 
@@ -111,6 +113,37 @@ public class DrawChessBoard {
                 out.print(" " + pieceToPrint + " ");
             } else {
                 out.print(EMPTY);
+            }
+        }
+    }
+
+    private void drawHighlights(int row, int col, PrintStream out, BoardOrientation orientation,
+                                Collection<ChessMove> validMoves) {
+        if ((col < 9 && col > 0) && (row < 9 && row > 0)) {
+            if (orientation == BoardOrientation.BLACK) {
+                col = (col - 1) * -1 + 8;
+            } else {
+                row = (row * -1) + 9;
+            }
+            for (ChessMove move : validMoves) {
+                if (move.getStartPosition().getRow() == row && move.getStartPosition().getColumn() == col) {
+                    out.print(SET_BG_COLOR_YELLOW);
+                    return;
+                } else if (move.getEndPosition().getRow() == row && move.getEndPosition().getColumn() == col) {
+                    if ((col + row) % 2 == 0) {
+                        out.print(SET_BG_COLOR_GREEN);
+                        return;
+                    } else {
+                        out.print(SET_BG_COLOR_DARK_GREEN);
+                        return;
+                    }
+                } else {
+                    if ((col + row) % 2 == 0) {
+                        out.print(SET_BG_COLOR_LIGHT_GREY);
+                    } else {
+                        out.print(SET_BG_COLOR_BLACK);
+                    }
+                }
             }
         }
     }
