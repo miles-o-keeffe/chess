@@ -118,7 +118,7 @@ public class WebSocketHandler {
             return;
         }
 
-        if (makeMoveCommand.getChessMove() == null) {
+        if (makeMoveCommand.getMove() == null) {
             LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData);
             try {
                 connections.loadGameAll(loadGameMessage);
@@ -130,7 +130,7 @@ public class WebSocketHandler {
 
         ChessGame newChessGame;
         try {
-            newChessGame = gameData.game().makeMove(makeMoveCommand.getChessMove());
+            newChessGame = gameData.game().makeMove(makeMoveCommand.getMove());
         } catch (InvalidMoveException e) {
             sendErrorMessage(currentSession, "Error: Invalid Move");
             return;
@@ -150,7 +150,7 @@ public class WebSocketHandler {
             System.out.println("Unable to send load game messages");
         }
 
-        String notificationMsg = username + " moved " + makeMoveCommand.getChessMove().toString();
+        String notificationMsg = username + " moved " + makeMoveCommand.getMove().toString();
         NotificationMessage moveNotificationMsg = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, notificationMsg);
         try {
             connections.notifyAllOthersInGame(username, newGameData.gameID(), moveNotificationMsg);
