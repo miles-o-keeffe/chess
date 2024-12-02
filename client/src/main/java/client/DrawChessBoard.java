@@ -147,13 +147,4 @@ public class DrawChessBoard {
             }
         }
     }
-
-    public void drawBreakBlack() {
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        out.print(SET_BG_COLOR_BLACK);
-        for (int i = 0; i < 10; i++) {
-            System.out.print("   ");
-        }
-        System.out.println(RESET_BG_COLOR);
-    }
 }

@@ -308,15 +308,6 @@ public class WebSocketHandler {
         }
     }
 
-    private void sendNotificationMessage(Session currentSession, String message) {
-        NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        try {
-            currentSession.getRemote().sendString(new Gson().toJson((notificationMessage)));
-        } catch (IOException e) {
-            System.out.println("Unable to send message");
-        }
-    }
-
     private void sendErrorMessage(Session currentSession, String message) {
         ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
         try {
@@ -330,7 +321,8 @@ public class WebSocketHandler {
         String errorMessage = "Error: Unable to connect to the database";
         System.out.println("Message Received but " + errorMessage);
         try {
-            currentSession.getRemote().sendString(new Gson().toJson(new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, errorMessage)));
+            currentSession.getRemote().sendString(new Gson().toJson(
+                    new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, errorMessage)));
         } catch (IOException e) {
             System.out.println("Unable to send message");
         }
