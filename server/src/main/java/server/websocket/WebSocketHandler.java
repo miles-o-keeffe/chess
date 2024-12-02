@@ -55,7 +55,7 @@ public class WebSocketHandler {
             makeMove(authData.username(), session, makeMoveCommand);
         } else if (userGameCommand.getCommandType() == UserGameCommand.CommandType.RESIGN) {
             ResignCommand resignCommand = new Gson().fromJson(message, ResignCommand.class);
-            resign(authData.username(), resignCommand);
+            resign(authData.username(), session, resignCommand);
         }
     }
 
@@ -103,7 +103,7 @@ public class WebSocketHandler {
             return;
         }
 
-        if (connections.isGameEnd(gameData.gameID())) {
+        if (gameData.game().isGameOver()) {
             sendErrorMessage(currentSession, "Error: The game has ended");
             return;
         }
@@ -176,7 +176,7 @@ public class WebSocketHandler {
                     System.out.println("Unable to send checkmate messages");
                 }
             }
-            connections.endGame(newGameData.gameID());
+            this.endGame(username, newGameData, currentSession);
             return;
         }
 
@@ -188,7 +188,7 @@ public class WebSocketHandler {
             } catch (IOException e) {
                 System.out.println("Unable to send stalemate messages");
             }
-            connections.endGame(newGameData.gameID());
+            this.endGame(username, newGameData, currentSession);
             return;
         }
         notifyCheck(newChessGame, newGameData);
@@ -227,8 +227,26 @@ public class WebSocketHandler {
         connections.remove(username);
     }
 
-    private void resign(String username, ResignCommand resignCommand) {
-        connections.endGame(resignCommand.getGameID());
+    private void resign(String username, Session currentSession, ResignCommand resignCommand) {
+        GameData gameData;
+        try {
+            gameData = dataAccess.getGame(resignCommand.getGameID());
+        } catch (DataAccessException e) {
+            unableToConnectToDB(currentSession);
+            return;
+        }
+
+        if (isObserver(username, gameData)) {
+            sendErrorMessage(currentSession, "Error: Observers can't resign");
+            return;
+        }
+
+        if (gameData.game().isGameOver()) {
+            sendErrorMessage(currentSession, "Error: Game is already over");
+            return;
+        }
+
+        this.endGame(username, gameData, currentSession);
 
         String resignMsg = username + " has resigned";
         NotificationMessage resignNotificationMsg = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, resignMsg);
@@ -236,6 +254,16 @@ public class WebSocketHandler {
             connections.notifyAllInGame(resignCommand.getGameID(), resignNotificationMsg);
         } catch (IOException e) {
             System.out.println("Unable to send resign game messages");
+        }
+    }
+
+    private void endGame(String username, GameData gameData, Session currentSession) {
+        gameData.game().setGameOver(true);
+
+        try {
+            dataAccess.updateGame(gameData);
+        } catch (DataAccessException e) {
+            unableToConnectToDB(currentSession);
         }
     }
 

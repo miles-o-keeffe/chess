@@ -14,6 +14,7 @@ public class ChessGame {
 
     ChessBoard board = new ChessBoard();
     TeamColor turn = TeamColor.WHITE;
+    private boolean isGameOver = false;
 
     @Override
     public boolean equals(Object o) {
@@ -252,5 +253,13 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return this.board;
+    }
+
+    public boolean isGameOver() {
+        return isGameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        isGameOver = gameOver;
     }
 }
