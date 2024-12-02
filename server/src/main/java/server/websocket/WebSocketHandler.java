@@ -40,7 +40,7 @@ public class WebSocketHandler {
         UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
         AuthData authData = authenticate(session, userGameCommand.getAuthToken());
         if (authData == null) {
-            sendErrorMessage(session, "Not authorized");
+            sendErrorMessage(session, "Error: Not authorized");
             return;
         }
 
@@ -69,7 +69,7 @@ public class WebSocketHandler {
         }
 
         if (gameData == null) {
-            sendErrorMessage(session, "Invalid Game ID");
+            sendErrorMessage(session, "Error: Invalid Game ID");
             return;
         }
 
@@ -104,17 +104,27 @@ public class WebSocketHandler {
         }
 
         if (connections.isGameEnd(gameData.gameID())) {
-            sendErrorMessage(currentSession, "The game has ended");
+            sendErrorMessage(currentSession, "Error: The game has ended");
             return;
         }
 
         if (isObserver(username, gameData)) {
-            sendErrorMessage(currentSession, "Observers can't make moves");
+            sendErrorMessage(currentSession, "Error: Observers can't make moves");
             return;
         }
 
         if (getCurrentColor(username, gameData) != gameData.game().getTeamTurn()) {
-            sendErrorMessage(currentSession, "It is not your turn");
+            sendErrorMessage(currentSession, "Error: It is not your turn");
+            return;
+        }
+
+        if (makeMoveCommand.getChessMove() == null) {
+            LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData);
+            try {
+                connections.loadGameAll(loadGameMessage);
+            } catch (IOException e) {
+                System.out.println("Unable to send load game messages");
+            }
             return;
         }
 
@@ -122,7 +132,7 @@ public class WebSocketHandler {
         try {
             newChessGame = gameData.game().makeMove(makeMoveCommand.getChessMove());
         } catch (InvalidMoveException e) {
-            sendErrorMessage(currentSession, "Invalid Move");
+            sendErrorMessage(currentSession, "Error: Invalid Move");
             return;
         }
 
@@ -139,6 +149,14 @@ public class WebSocketHandler {
             connections.loadGameAll(loadGameMessage);
         } catch (IOException e) {
             System.out.println("Unable to send load game messages");
+        }
+
+        String notificationMsg = username + " moved " + makeMoveCommand.getChessMove().toString();
+        NotificationMessage moveNotificationMsg = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, notificationMsg);
+        try {
+            connections.notifyAllOthersInGame(username, newGameData.gameID(), moveNotificationMsg);
+        } catch (IOException e) {
+            System.out.println("Unable to send move notification messages");
         }
 
         if (isGameInCheckMate(newGameData)) {
@@ -207,6 +225,8 @@ public class WebSocketHandler {
         } catch (IOException e) {
             System.out.println("Unable to send leave game messages");
         }
+
+        connections.remove(username);
     }
 
     private void resign(String username, ResignCommand resignCommand) {
@@ -309,7 +329,7 @@ public class WebSocketHandler {
     }
 
     private void unableToConnectToDB(Session currentSession) {
-        String errorMessage = "Unable to connect to the database";
+        String errorMessage = "Error: Unable to connect to the database";
         System.out.println("Message Received but " + errorMessage);
         try {
             currentSession.getRemote().sendString(new Gson().toJson(new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, errorMessage)));

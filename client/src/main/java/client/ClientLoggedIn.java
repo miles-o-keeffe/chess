@@ -129,6 +129,7 @@ public class ClientLoggedIn {
                 int mySQLGameID = recentGameList.get(Integer.parseInt(params[0]) - 1).gameID();
                 this.setGameJoinedID(mySQLGameID);
                 this.setObserving(true);
+                this.teamColor = ChessGame.TeamColor.WHITE;
                 return String.format("Game \"" + params[0] + "\" joined as an observer");
             } catch (Exception e) {
                 return e.getMessage();

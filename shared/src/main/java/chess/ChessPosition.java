@@ -56,6 +56,7 @@ public class ChessPosition {
 
     @Override
     public String toString() {
-        return this.row + ":" + this.col;
+        char col = (char) (this.col + 96); // Turns the color into a letter
+        return col + "" + this.row;
     }
 }
