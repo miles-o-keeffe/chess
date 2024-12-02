@@ -22,6 +22,10 @@ public class ConnectionManager {
 
     public void notifyAllOthersInGame(String excludeUserName, int gameID, NotificationMessage notification) throws IOException {
         for (var entry : connections.entrySet()) {
+            if (!entry.getValue().getSession().isOpen()) {
+                connections.remove(entry.getKey());
+                continue;
+            }
             if ((!Objects.equals(entry.getKey(), excludeUserName) && entry.getValue().getGameID() == gameID)) {
                 entry.getValue().send(new Gson().toJson(notification));
             }
@@ -30,6 +34,10 @@ public class ConnectionManager {
 
     public void notifyAllInGame(int gameID, NotificationMessage notification) throws IOException {
         for (var entry : connections.entrySet()) {
+            if (!entry.getValue().getSession().isOpen()) {
+                connections.remove(entry.getKey());
+                continue;
+            }
             if (entry.getValue().getGameID() == gameID) {
                 entry.getValue().send(new Gson().toJson(notification));
             }
@@ -38,6 +46,10 @@ public class ConnectionManager {
 
     public void loadGameAll(LoadGameMessage loadGameMessage) throws IOException {
         for (var entry : connections.entrySet()) {
+            if (!entry.getValue().getSession().isOpen()) {
+                connections.remove(entry.getKey());
+                continue;
+            }
             if (entry.getValue().getGameID() == loadGameMessage.getGame().gameID()) {
                 entry.getValue().send(new Gson().toJson(loadGameMessage));
             }
@@ -46,6 +58,10 @@ public class ConnectionManager {
 
     public void endGame(int gameID) {
         for (var entry : connections.entrySet()) {
+            if (!entry.getValue().getSession().isOpen()) {
+                connections.remove(entry.getKey());
+                continue;
+            }
             if (entry.getValue().getGameID() == gameID) {
                 entry.getValue().setGameOver(true);
             }
@@ -54,6 +70,10 @@ public class ConnectionManager {
 
     public boolean isGameEnd(int gameID) {
         for (var entry : connections.entrySet()) {
+            if (!entry.getValue().getSession().isOpen()) {
+                connections.remove(entry.getKey());
+                continue;
+            }
             if (entry.getValue().getGameID() == gameID) {
                 return entry.getValue().isGameOver();
             }

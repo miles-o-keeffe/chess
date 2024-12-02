@@ -23,7 +23,7 @@ public class Connection {
     }
 
     public void send(String msg) throws IOException {
-        session.getRemote().sendString(msg);
+        this.session.getRemote().sendString(msg);
     }
 
     public boolean isGameOver() {
