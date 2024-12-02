@@ -137,7 +137,6 @@ public class WebSocketHandler {
         }
 
         GameData newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), newChessGame);
-
         try {
             dataAccess.updateGame(newGameData);
         } catch (DataAccessException e) {
@@ -192,7 +191,6 @@ public class WebSocketHandler {
             connections.endGame(newGameData.gameID());
             return;
         }
-
         notifyCheck(newChessGame, newGameData);
     }
 
