@@ -66,12 +66,10 @@ public class ClientGamePlay {
     }
 
     private String leaveGame() {
-        if (!isObserving) {
-            try {
-                ws.leave(this.authToken, this.gameID);
-            } catch (ResponseException e) {
-                System.out.println("Error: Couldn't connect to server");
-            }
+        try {
+            ws.leave(this.authToken, this.gameID);
+        } catch (ResponseException e) {
+            System.out.println("Error: Couldn't connect to server");
         }
         return "leave";
     }

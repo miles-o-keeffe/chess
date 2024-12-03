@@ -73,6 +73,10 @@ public class WebSocketHandler {
             return;
         }
 
+        if (gameData.game().isGameOver()) {
+            sendNotificationMessage(currentSession, "This game has ended. No Moves can be made");
+        }
+
         connections.add(username, gameData.gameID(), session);
 
         String joinMessage = username + " joined as ";
@@ -195,6 +199,8 @@ public class WebSocketHandler {
     }
 
     private void leave(String username, LeaveCommand leaveCommand) {
+        boolean isObserving = false;
+
         GameData gameData;
         try {
             gameData = dataAccess.getGame(leaveCommand.getGameID());
@@ -208,15 +214,22 @@ public class WebSocketHandler {
             newGameData = new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game());
         } else if (Objects.equals(username, gameData.blackUsername())) {
             newGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), null, gameData.gameName(), gameData.game());
+        } else {
+            isObserving = true;
         }
 
-        try {
-            dataAccess.updateGame(newGameData);
-        } catch (DataAccessException e) {
-            unableToConnectToDB(currentSession);
+        String leaveMsg = "";
+        if (!isObserving) {
+            try {
+                dataAccess.updateGame(newGameData);
+            } catch (DataAccessException e) {
+                unableToConnectToDB(currentSession);
+            }
+            leaveMsg = username + " left the game";
+        } else {
+            leaveMsg = username + " stopped observing the game";
         }
 
-        String leaveMsg = username + " left the game";
         NotificationMessage leaveNotificationMsg = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, leaveMsg);
         try {
             connections.notifyAllOthersInGame(username, newGameData.gameID(), leaveNotificationMsg);
@@ -248,13 +261,32 @@ public class WebSocketHandler {
 
         this.endGame(username, gameData, currentSession);
 
-        String resignMsg = username + " has resigned";
+        String opposingUsername = getOpposingUsername(username, gameData);
+
+        String resignMsg = username + " has resigned. " + opposingUsername + " has Won!";
         NotificationMessage resignNotificationMsg = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, resignMsg);
         try {
             connections.notifyAllInGame(resignCommand.getGameID(), resignNotificationMsg);
         } catch (IOException e) {
             System.out.println("Unable to send resign game messages");
         }
+    }
+
+    private String getOpposingUsername(String username, GameData gameData) {
+        String opposingUsername = "";
+        if (Objects.equals(username, gameData.whiteUsername())) {
+            opposingUsername = gameData.blackUsername();
+        } else if (Objects.equals(username, gameData.blackUsername())) {
+            opposingUsername = gameData.whiteUsername();
+        }
+        if (Objects.equals(opposingUsername, "") || opposingUsername == null) {
+            if (Objects.equals(username, gameData.whiteUsername())) {
+                opposingUsername = "BLACK";
+            } else if (Objects.equals(username, gameData.blackUsername())) {
+                opposingUsername = "WHITE";
+            }
+        }
+        return opposingUsername;
     }
 
     private void endGame(String username, GameData gameData, Session currentSession) {
@@ -328,6 +360,15 @@ public class WebSocketHandler {
     private void sendJSON(String json) {
         try {
             this.currentSession.getRemote().sendString(json);
+        } catch (IOException e) {
+            System.out.println("Unable to send message");
+        }
+    }
+
+    private void sendNotificationMessage(Session currentSession, String message) {
+        NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.ERROR, message);
+        try {
+            currentSession.getRemote().sendString(new Gson().toJson(notificationMessage));
         } catch (IOException e) {
             System.out.println("Unable to send message");
         }
