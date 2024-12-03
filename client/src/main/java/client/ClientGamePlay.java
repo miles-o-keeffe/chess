@@ -1,9 +1,6 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
+import chess.*;
 import client.websocket.MessageHandler;
 import client.websocket.WebSocketFacade;
 import exception.ResponseException;
@@ -86,6 +83,18 @@ public class ClientGamePlay {
         }
 
         if (params.length >= 2) {
+            ChessPiece.PieceType promotionPiece = null;
+            if (params.length >= 3) {
+                ChessPiece.PieceType newPromotionPiece = getPromotionPiece(params[2]);
+                if (newPromotionPiece != ChessPiece.PieceType.QUEEN &&
+                        newPromotionPiece != ChessPiece.PieceType.ROOK &&
+                        newPromotionPiece != ChessPiece.PieceType.BISHOP &&
+                        newPromotionPiece != ChessPiece.PieceType.KNIGHT) {
+                    return "Invalid Promotion Piece";
+                }
+                promotionPiece = newPromotionPiece;
+            }
+
             char startCol = params[0].charAt(0);
             char startRow = params[0].charAt(1);
 
@@ -98,7 +107,7 @@ public class ClientGamePlay {
                 return "Invalid Input";
             }
 
-            ChessMove chessMove = new ChessMove(startPosition, endPosition, null);
+            ChessMove chessMove = new ChessMove(startPosition, endPosition, promotionPiece);
 
             try {
                 ws.makeMove(this.authToken, this.gameID, chessMove);
@@ -107,6 +116,16 @@ public class ClientGamePlay {
             }
         }
         return "";
+    }
+
+    public ChessPiece.PieceType getPromotionPiece(String piece) {
+        return switch (piece.toLowerCase()) {
+            case "rook" -> ChessPiece.PieceType.ROOK;
+            case "queen" -> ChessPiece.PieceType.QUEEN;
+            case "bishop" -> ChessPiece.PieceType.BISHOP;
+            case "knight" -> ChessPiece.PieceType.KNIGHT;
+            default -> null;
+        };
     }
 
     public ChessPosition validateMove(char row, char col) {
