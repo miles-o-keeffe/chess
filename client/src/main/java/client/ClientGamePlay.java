@@ -7,6 +7,7 @@ import exception.ResponseException;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Scanner;
 
 public class ClientGamePlay {
     private final String serverURL;
@@ -138,10 +139,17 @@ public class ClientGamePlay {
 
     private String resign() {
         if (!isObserving) {
-            try {
-                ws.resign(this.authToken, this.gameID);
-            } catch (ResponseException e) {
-                System.out.println("Error: Couldn't connect to server");
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Are you sure you want to resign? (Y/N): ");
+            String line = scanner.nextLine();
+            if (line.toUpperCase().equals("Y")) {
+                try {
+                    ws.resign(this.authToken, this.gameID);
+                } catch (ResponseException e) {
+                    System.out.println("Error: Couldn't connect to server");
+                }
+            } else {
+                return "";
             }
         } else {
             System.out.println("Observers cannot resign");
