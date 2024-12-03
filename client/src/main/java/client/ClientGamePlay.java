@@ -142,7 +142,8 @@ public class ClientGamePlay {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Are you sure you want to resign? (Y/N): ");
             String line = scanner.nextLine();
-            if (line.toUpperCase().equals("Y")) {
+
+            if (line.equalsIgnoreCase("Y")) {
                 try {
                     ws.resign(this.authToken, this.gameID);
                 } catch (ResponseException e) {
