@@ -300,7 +300,7 @@ public class WebSocketHandler {
     }
 
     private boolean isGameInCheckMate(GameData gameData) {
-        return gameData.game().isInCheck(ChessGame.TeamColor.WHITE) || gameData.game().isInCheck(ChessGame.TeamColor.BLACK);
+        return gameData.game().isInCheckmate(ChessGame.TeamColor.WHITE) || gameData.game().isInCheckmate(ChessGame.TeamColor.BLACK);
     }
 
     private boolean isGameInStalemate(GameData gameData) {
