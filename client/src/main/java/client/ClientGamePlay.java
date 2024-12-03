@@ -171,9 +171,10 @@ public class ClientGamePlay {
     public String help() {
         return "redraw - the chess board\n" +
                 "leave - the game\n" +
-                "move <CHESS MOVE> - to make a chess move. format: e4 e5\n" +
+                "move <CHESS MOVE> - to make a chess move. format: e4 e5.\n" +
+                "                    A promotion piece can be added if needed\n" +
                 "resign - from the game\n" +
-                "highlight <CHESS POSITION> - to see valid moves. format: e4" +
+                "highlight <CHESS POSITION> - to see valid moves. format: e4\n" +
                 "help - with possible commands\n";
     }
 
