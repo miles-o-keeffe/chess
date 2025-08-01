@@ -2,7 +2,7 @@
 
 A Java-based terminal chess game built using a modular architecture with client-server communication and full game logic implementation. Developed using **Test-Driven Development** and organized with a standard **Maven project structure**.
 
-![Chess Board Screenshot](images/chess-screenshot.png)  
+<img src="images/chess-screenshot.png" alt="Chess Board Screenshot" width="500"/>
 *Sample in-game view and help menu.*
 
 ---
