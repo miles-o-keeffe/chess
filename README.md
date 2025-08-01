@@ -1,6 +1,42 @@
-# chess
-Chess game
+* # ♟️ Chess Game
 
-Sequence Diagram for my API:
-https://sequencediagram.org/index.html?presentationMode=readOnly#initialData=IYYwLg9gTgBAwgGwJYFMB2YBQAHYUxIhK4YwDKKUAbpTngUSWDABLBoAmCtu+hx7ZhWqEUdPo0EwAIsDDAAgiBAoAzqswc5wAEbBVKGBx2ZM6MFACeq3ETQBzGAAYAdAHZM9qBACu2GADEaMBUljAASij2SKoWckgQaIEA7gAWSGBiiKikALQAfOSUNFAAXDAA2gAKAPJkACoAujAA9D4GUAA6aADeAETtlMEAtih9pX0wfQA0U7jqydAc45MzUyjDwEgIK1MAvpjCJTAFrOxclOX9g1AjYxNTs33zqotQyw9rfRtbO58HbE43FgpyOonKUCiMUyUAAFJForFKJEAI4+NRgACUh2KohOhVk8iUKnU5XsKDAAFUOrCbndsYTFMo1Kp8UYdKUAGJITgwamURkwHRhOnAUaYRnElknUG4lTlNA+BAIHEiFRsyXM0kgSFyFD8uE3RkM7RS9Rs4ylBQcDh8jqM1VUPGnTUk1SlHUoPUKHxgVKw4C+1LGiWmrWs06W622n1+h1g9W5U6Ai5lCJQpFQSKqJVYFPAmWFI6XGDXDp3SblVZPQN++oQADW6ErU32jsohfgyHM5QATE4nN0y0MxWMYFXHlNa6l6020C3Vgd0BxTF5fP4AtB2OSYAAZCDRJIBNIZLLdvJF4ol6p1JqtAzqBJoIei0azF5vDgHYsgwr5ks9K+KDvvorxLAC5wFrKaooOUCAHjysL7oeqLorE2IJoYLphm6ZIUgatLlqOJpEuGFoctyvIGoKwowEBoakW6naYeU1HaI6zoEjhLIerqmSxv604hq60qRhy0YwAJ8ZylhyaQSWyE8tmuaYP+ILQSUVx9NOs7NuOrZfEBC5tj+nbZD2MD9oOvTaUGunzvp1ZTEZjltsuq7eH4gReCg6B7gevjMMe6SZJg5kXkU1DXtIACiu4xfUMXNC0D6qE+3Q6Y26Dtr+ZxAiWmVzqp8m5SxMDwfYgVIQFvqoRiGEyRq3GkuSYACQGdlZWgJFMkxYlcjyMZBjRYSFdlInmkml4weUUnsZhTWMTxRgoNw-FBh1dZdT1ZoRoUlrSKtFKGHN8gMb1okaeCMCKsqHGJnJ+VpshgXKQgeYlcxV5pj037fWZ55gH2A5DkunAeeugSQrau7QjAADio6ssFp5hYDbI-uUFTwwlyX2KOGWdUVpmPam5RjWgxVPRjMlwdCiOjKoSH00jdXofdWFcUtLUUu1FM7WR-WUUNcbaEKo1E+NzURld8qScN82Ndh3PuuVLOM7CAt9ftHLwxSCOjg6E0y9NTpywzKDSTBnZqeUsOxBbqhvR91NTZFmmllM+OM+MlT9N7KAAJLSL7ACMvYAMwACxPCemQGhWExfDoCCgA2CejisXwBwAcqOSd7DAjR-VF6mFOFQOWSDvRe0jvsVP7o7B2Hkcx1Mcf6kRoxZ08Kdpxn3dJ08uf530fSF8XZjg54nkbtgPhQNg3DwHxhgWykIVnjkzAadetQNHjBPBJLz69CPowl8cpPAlc58oBBrum9dnp6hbsJwKvFts1iHOLRdPNtQ2vzc6u1yIDV5KdYA4sYAUxAYLWWsF5aizOgtZW-93Qv0yG-AOwlpZgIkhbI2eC3ZlQDsHX+btbYry9Fg0czsqapi+qXK4tdRjN3KOHaOMBL4djdhXYG1keisKDiHDhrduFTxXDPSGARLCrXgskGAAApCAPIDajECH3EADY0bbxpswyoVRKR3haAHQmW05xDiXsAORUA4AQHglAWYZDpA8NylQimVjU62PsY45xTdXEMKgk-OWAArVRaA34qJ5F-FAaJ6oUK5ug0orU+Yny1qJHW4CRbBjFrRWBxsmFm0QZAxJMhpYpIpNggJGTJpZOFuoy2eSwguLgX1BB5RCGK2tmg3apQ-BaFoaMWEODtC1L2uyUolJsCDLXobZpMBRlnUKSQ2mN0lQqlQdfEs0TIl0LUCpNSRSAJuIBtvARoNJEQy8gELwNiuxelgMAbAS9CDxESBvVGFd9EewqLFeKiVkrGBymyKhv0gm8JCYgkA3A8CazKcbD0sK4QGnGWAxAjyYHKjtAKbpxS-59JhY82EFs0X9QxXgLFCBGlW3xb08MSLiUCTJVkilTzsWlJWR09Zd0tl-hKuUNl9CjmrIMeCkmpx+FV0EWDFcQA
+A Java-based terminal chess game built using a modular architecture with client-server communication and full game logic implementation. Developed using **Test-Driven Development** and organized with a standard **Maven project structure**.
 
+![Chess Board Screenshot](images/chess-screenshot.png)  
+*Sample in-game view and help menu.*
+
+---
+
+## 🧩 Project Structure
+
+The project is divided into three main modules:
+
+- **Client**  
+  The command-line interface where players can:
+  - Register and sign in
+  - Search and join active games
+  - View the game board and move pieces
+  - Access help menus and game history
+
+- **Server**  
+  The server handles:
+  - Game coordination and matchmaking
+  - Persistent data storage using a MySQL database
+  - Real-time updates using WebSockets
+  - HTTP routing for user registration and authentication
+
+- **Shared**  
+  Encapsulates:
+  - Core chess rules (valid moves, check, checkmate, etc.)
+  - Turn management
+  - Game state serialization
+
+---
+
+## 🧪 Testing
+
+The entire codebase was developed using **Test-Driven Development (TDD)**. Comprehensive unit tests validate:
+- Game logic and rules
+- Client-server communication
+- Data persistence
+- User authentication
